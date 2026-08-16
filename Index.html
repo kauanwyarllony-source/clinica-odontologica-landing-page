@@ -1,0 +1,1024 @@
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>OdontoGestão — SaaS para Clínicas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #F5F9F8;
+    --surface: #FFFFFF;
+    --surface-2: #EEF5F4;
+    --border: #DCEAE7;
+    --primary: #10514D;
+    --primary-bright: #1C8C82;
+    --accent: #F2994A;
+    --accent-2: #E8823A;
+    --text: #14231F;
+    --muted: #5B7A75;
+    --success: #2E9B6F;
+    --danger: #D9534F;
+    --warning: #C97B1F;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 4px 18px rgba(16,81,77,0.08);
+    --shadow-lg: 0 12px 32px rgba(16,81,77,0.14);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html,body{
+    margin:0; padding:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  h1,h2,h3,.brand{
+    font-family: 'Fraunces', Georgia, serif;
+    letter-spacing: -0.01em;
+  }
+
+  .mono{ font-family: 'JetBrains Mono', monospace; }
+
+  button{ font-family: inherit; cursor:pointer; }
+
+  #app{
+    max-width: 520px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: var(--bg);
+    display:flex;
+    flex-direction: column;
+  }
+
+  /* ---------- Header ---------- */
+  header.topbar{
+    position: sticky; top:0; z-index: 20;
+    background: var(--primary);
+    color: #fff;
+    padding: 18px 18px 22px;
+    border-radius: 0 0 22px 22px;
+    box-shadow: var(--shadow-lg);
+  }
+  .topbar-row{
+    display:flex; align-items:center; gap:12px;
+  }
+  .back-btn{
+    display:none;
+    align-items:center; justify-content:center;
+    width:38px; height:38px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.14);
+    border: none;
+    color:#fff;
+    font-size: 18px;
+    flex-shrink:0;
+  }
+  .back-btn.show{ display:flex; }
+  .topbar-title{ flex:1; min-width:0; }
+  .topbar-title .brand{
+    font-size: 20px; font-weight: 600; margin:0; line-height:1.2;
+  }
+  .topbar-title .sub{
+    font-size: 12.5px; color: rgba(255,255,255,0.72); margin-top:2px;
+  }
+  .pulse-line{
+    margin-top: 14px; height: 22px; width:100%;
+    opacity:0.9;
+  }
+  .pulse-line path{
+    fill:none; stroke: var(--accent);
+    stroke-width:2; stroke-linecap:round; stroke-linejoin:round;
+    stroke-dasharray: 340; stroke-dashoffset: 340;
+    animation: draw 2.6s ease-in-out infinite;
+  }
+  @keyframes draw{
+    0%{ stroke-dashoffset: 340; }
+    45%{ stroke-dashoffset: 0; }
+    70%{ stroke-dashoffset: 0; }
+    100%{ stroke-dashoffset: -340; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .pulse-line path{ animation: none; stroke-dashoffset: 0; }
+  }
+
+  /* ---------- Main / views ---------- */
+  main{ flex:1; padding: 18px 18px 100px; }
+  .view{ display:none; animation: fadein .25s ease; }
+  .view.active{ display:block; }
+  @keyframes fadein{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .view-heading{
+    font-size: 22px; font-weight:600; margin: 4px 0 4px;
+  }
+  .view-desc{ color: var(--muted); font-size: 13.5px; margin: 0 0 18px; }
+
+  /* ---------- Dashboard grid ---------- */
+  .stats-row{
+    display:grid; grid-template-columns: repeat(2,1fr); gap:10px;
+    margin: 16px 0 20px;
+  }
+  .stat-card{
+    background: var(--surface); border:1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 12px 14px;
+  }
+  .stat-card .num{ font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:600; color:var(--primary); }
+  .stat-card .label{ font-size:11.5px; color:var(--muted); margin-top:2px; }
+
+  .module-grid{
+    display:grid; grid-template-columns: repeat(2,1fr); gap:12px;
+  }
+  .module-card{
+    background: var(--surface); border:1px solid var(--border);
+    border-radius: var(--radius); padding: 16px 14px;
+    text-align:left; display:flex; flex-direction:column; gap:8px;
+    box-shadow: var(--shadow);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .module-card:active{ transform: scale(0.97); }
+  .module-icon{
+    width:38px; height:38px; border-radius:11px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; background: var(--surface-2); color: var(--primary-bright);
+  }
+  .module-card .m-title{ font-weight:600; font-size:14.5px; }
+  .module-card .m-desc{ font-size:11.5px; color:var(--muted); line-height:1.4; }
+
+  /* ---------- Forms ---------- */
+  .card{
+    background: var(--surface); border:1px solid var(--border);
+    border-radius: var(--radius); padding:16px; margin-bottom:16px;
+    box-shadow: var(--shadow);
+  }
+  .card h3{ margin:0 0 12px; font-size:15.5px; }
+  label{ display:block; font-size:12.5px; color:var(--muted); margin: 10px 0 4px; }
+  input, select, textarea{
+    width:100%; padding: 10px 12px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); background: var(--surface); color: var(--text);
+    font-size: 14px; font-family: inherit;
+  }
+  input:focus, select:focus, textarea:focus{
+    outline: 2px solid var(--primary-bright); outline-offset:1px;
+  }
+  textarea{ resize: vertical; min-height:70px; }
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    padding: 11px 16px; border-radius: 12px; border:none;
+    font-weight:600; font-size:14px;
+  }
+  .btn-primary{ background: var(--primary); color:#fff; width:100%; margin-top:14px; }
+  .btn-primary:active{ background: var(--primary-bright); }
+  .btn-accent{ background: var(--accent); color:#fff; }
+  .btn-outline{ background: transparent; color: var(--primary); border:1px solid var(--border); }
+  .btn-danger{ background: rgba(217,83,79,0.1); color: var(--danger); }
+  .btn-sm{ padding: 7px 11px; font-size:12.5px; border-radius:9px; }
+
+  .search-box{ position:relative; margin-bottom:14px; }
+  .search-box input{ padding-left:34px; }
+  .search-box .icon{ position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--muted); }
+
+  /* ---------- Lists ---------- */
+  .list-item{
+    background: var(--surface); border:1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom:10px;
+    display:flex; align-items:center; gap:12px;
+  }
+  .avatar{
+    width:38px; height:38px; border-radius:50%; flex-shrink:0;
+    background: var(--surface-2); color: var(--primary);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:13.5px;
+  }
+  .li-body{ flex:1; min-width:0; }
+  .li-title{ font-weight:600; font-size:14px; }
+  .li-sub{ font-size:12px; color:var(--muted); margin-top:1px; }
+  .li-actions{ display:flex; gap:6px; flex-shrink:0; }
+
+  .badge{
+    font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:20px;
+    text-transform:uppercase; letter-spacing:.03em;
+  }
+  .badge-success{ background: rgba(46,155,111,0.12); color: var(--success); }
+  .badge-warning{ background: rgba(242,153,74,0.14); color: var(--warning); }
+  .badge-danger{ background: rgba(217,83,79,0.12); color: var(--danger); }
+  .badge-muted{ background: var(--surface-2); color: var(--muted); }
+
+  .empty-state{
+    text-align:center; padding: 34px 10px; color: var(--muted);
+  }
+  .empty-state .e-icon{ font-size:30px; margin-bottom:8px; }
+  .empty-state p{ font-size:13px; margin:0; }
+
+  .tabs{ display:flex; gap:6px; margin-bottom:16px; overflow-x:auto; }
+  .tab{
+    padding:8px 13px; border-radius:20px; font-size:12.5px; font-weight:600;
+    background: var(--surface); border:1px solid var(--border); color:var(--muted); white-space:nowrap;
+  }
+  .tab.active{ background: var(--primary); color:#fff; border-color:var(--primary); }
+
+  .summary-row{ display:grid; grid-template-columns: repeat(3,1fr); gap:8px; margin-bottom:16px; }
+  .summary-cell{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px; text-align:center; }
+  .summary-cell .v{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:14.5px; }
+  .summary-cell .l{ font-size:10.5px; color:var(--muted); margin-top:2px; }
+  .v.pos{ color: var(--success); } .v.neg{ color: var(--danger); }
+
+  .plan-card{
+    border-radius: var(--radius); padding:18px; margin-bottom:14px;
+    border:1px solid var(--border); background:var(--surface); position:relative;
+  }
+  .plan-card.featured{ border:2px solid var(--accent); box-shadow: var(--shadow-lg); }
+  .plan-card .tag{
+    position:absolute; top:-10px; right:16px; background:var(--accent); color:#fff;
+    font-size:10.5px; font-weight:700; padding:4px 10px; border-radius:20px;
+  }
+  .plan-card .price{ font-family:'Fraunces',serif; font-size:26px; font-weight:600; color:var(--primary); margin:6px 0; }
+  .plan-card .price span{ font-size:12px; color:var(--muted); font-family:'Inter'; font-weight:500; }
+  .plan-card ul{ list-style:none; padding:0; margin:12px 0; }
+  .plan-card li{ font-size:13px; padding:4px 0; color:var(--text); }
+  .plan-card li::before{ content:"✓ "; color:var(--success); font-weight:700; }
+
+  .chart-bars{ display:flex; align-items:flex-end; gap:8px; height:120px; margin: 10px 0 6px; }
+  .bar-col{ flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .bar{ width:100%; border-radius: 6px 6px 0 0; background: linear-gradient(180deg, var(--primary-bright), var(--primary)); }
+  .bar-label{ font-size:10px; color:var(--muted); }
+
+  .toast{
+    position:fixed; left:50%; bottom:26px; transform: translateX(-50%) translateY(20px);
+    background: var(--text); color:#fff; padding:11px 18px; border-radius:12px;
+    font-size:13px; opacity:0; pointer-events:none; transition: all .25s ease;
+    max-width: 90%; text-align:center; z-index:50;
+  }
+  .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
+
+  ::-webkit-scrollbar{ width:0; height:0; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header class="topbar">
+    <div class="topbar-row">
+      <button class="back-btn" id="backBtn" onclick="goHome()" aria-label="Voltar">←</button>
+      <div class="topbar-title">
+        <p class="brand" id="topTitle">OdontoGestão</p>
+        <div class="sub" id="topSub">Sorriso Clínica Odontológica</div>
+      </div>
+    </div>
+    <svg class="pulse-line" viewBox="0 0 340 22" preserveAspectRatio="none">
+      <path d="M0 11 L60 11 L74 2 L88 20 L100 11 L340 11" />
+    </svg>
+  </header>
+
+  <main>
+
+    <!-- ===================== HOME ===================== -->
+    <section class="view active" id="view-home">
+      <h1 class="view-heading">Boa tarde 👋</h1>
+      <p class="view-desc">Aqui está o resumo de hoje da sua clínica.</p>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="num" id="statPacientes">0</div><div class="label">Pacientes ativos</div></div>
+        <div class="stat-card"><div class="num" id="statConsultasHoje">0</div><div class="label">Consultas hoje</div></div>
+        <div class="stat-card"><div class="num" id="statPendentes">0</div><div class="label">Confirmações pendentes</div></div>
+        <div class="stat-card"><div class="num" id="statReceita">R$ 0</div><div class="label">Receita do mês</div></div>
+      </div>
+
+      <div class="module-grid">
+        <button class="module-card" onclick="showView('pacientes')">
+          <div class="module-icon">👤</div>
+          <div class="m-title">Pacientes</div>
+          <div class="m-desc">Cadastro, busca e histórico</div>
+        </button>
+        <button class="module-card" onclick="showView('consultas')">
+          <div class="module-icon">📅</div>
+          <div class="m-title">Consultas</div>
+          <div class="m-desc">Agenda e novos atendimentos</div>
+        </button>
+        <button class="module-card" onclick="showView('confirmacao')">
+          <div class="module-icon">✅</div>
+          <div class="m-title">Confirmação</div>
+          <div class="m-desc">Confirmar ou cancelar</div>
+        </button>
+        <button class="module-card" onclick="showView('avaliacoes')">
+          <div class="module-icon">⭐</div>
+          <div class="m-title">Avaliações</div>
+          <div class="m-desc">Feedback dos pacientes</div>
+        </button>
+        <button class="module-card" onclick="showView('financeiro')">
+          <div class="module-icon">💰</div>
+          <div class="m-title">Financeiro</div>
+          <div class="m-desc">Entradas, saídas e lucro</div>
+        </button>
+        <button class="module-card" onclick="showView('relatorios')">
+          <div class="module-icon">📊</div>
+          <div class="m-title">Relatórios</div>
+          <div class="m-desc">Visão geral da clínica</div>
+        </button>
+        <button class="module-card" onclick="showView('configuracoes')">
+          <div class="module-icon">⚙️</div>
+          <div class="m-title">Configurações</div>
+          <div class="m-desc">Clínica, backup, segurança</div>
+        </button>
+        <button class="module-card" onclick="showView('planos')">
+          <div class="module-icon">💳</div>
+          <div class="m-title">Planos</div>
+          <div class="m-desc">Assinatura da clínica</div>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===================== PACIENTES ===================== -->
+    <section class="view" id="view-pacientes">
+      <h2 class="view-heading">Pacientes</h2>
+      <p class="view-desc">Cadastre e acompanhe o histórico de cada paciente.</p>
+
+      <div class="card">
+        <h3>Novo paciente</h3>
+        <form id="formPaciente" onsubmit="return addPaciente(event)">
+          <label>Nome completo</label>
+          <input type="text" id="pNome" placeholder="Ex: Ana Beatriz Souza" required>
+          <label>Telefone</label>
+          <input type="tel" id="pTelefone" placeholder="(11) 99999-0000" required>
+          <label>Data de nascimento</label>
+          <input type="date" id="pNascimento">
+          <label>Observações</label>
+          <textarea id="pObs" placeholder="Alergias, convênio, preferências..."></textarea>
+          <button class="btn btn-primary" type="submit">Salvar paciente</button>
+        </form>
+      </div>
+
+      <div class="search-box">
+        <span class="icon">🔍</span>
+        <input type="text" id="buscaPaciente" placeholder="Buscar paciente por nome..." oninput="renderPacientes()">
+      </div>
+
+      <div id="listaPacientes"></div>
+    </section>
+
+    <!-- ===================== CONSULTAS ===================== -->
+    <section class="view" id="view-consultas">
+      <h2 class="view-heading">Consultas</h2>
+      <p class="view-desc">Agende novos atendimentos e acompanhe a agenda.</p>
+
+      <div class="card">
+        <h3>Nova consulta</h3>
+        <form id="formConsulta" onsubmit="return addConsulta(event)">
+          <label>Paciente</label>
+          <select id="cPaciente" required></select>
+          <label>Data</label>
+          <input type="date" id="cData" required>
+          <label>Hora</label>
+          <input type="time" id="cHora" required>
+          <label>Procedimento</label>
+          <input type="text" id="cProcedimento" placeholder="Ex: Limpeza, Canal, Avaliação" required>
+          <button class="btn btn-primary" type="submit">Agendar consulta</button>
+        </form>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-ftr="todas" onclick="filtrarConsultas('todas', this)">Todas</button>
+        <button class="tab" data-ftr="agendadas" onclick="filtrarConsultas('agendadas', this)">Agendadas</button>
+        <button class="tab" data-ftr="realizadas" onclick="filtrarConsultas('realizadas', this)">Realizadas</button>
+      </div>
+
+      <div id="listaConsultas"></div>
+    </section>
+
+    <!-- ===================== CONFIRMAÇÃO ===================== -->
+    <section class="view" id="view-confirmacao">
+      <h2 class="view-heading">Confirmação</h2>
+      <p class="view-desc">Confirme ou cancele as consultas pendentes.</p>
+
+      <div class="tabs">
+        <button class="tab active" data-ftc="pendente" onclick="filtrarConfirmacao('pendente', this)">Pendentes</button>
+        <button class="tab" data-ftc="confirmada" onclick="filtrarConfirmacao('confirmada', this)">Confirmadas</button>
+        <button class="tab" data-ftc="cancelada" onclick="filtrarConfirmacao('cancelada', this)">Canceladas</button>
+      </div>
+
+      <div id="listaConfirmacao"></div>
+    </section>
+
+    <!-- ===================== AVALIAÇÕES ===================== -->
+    <section class="view" id="view-avaliacoes">
+      <h2 class="view-heading">Avaliações</h2>
+      <p class="view-desc">Veja o que os pacientes acham da clínica.</p>
+
+      <div class="stat-card" style="margin-bottom:16px;">
+        <div class="num" id="mediaAvaliacao">0.0 ⭐</div>
+        <div class="label">Média geral (<span id="totalAvaliacoes">0</span> avaliações)</div>
+      </div>
+
+      <div class="card">
+        <h3>Nova avaliação</h3>
+        <form id="formAvaliacao" onsubmit="return addAvaliacao(event)">
+          <label>Paciente</label>
+          <input type="text" id="avPaciente" placeholder="Nome do paciente" required>
+          <label>Nota</label>
+          <select id="avNota" required>
+            <option value="5">⭐⭐⭐⭐⭐ Excelente</option>
+            <option value="4">⭐⭐⭐⭐ Muito bom</option>
+            <option value="3">⭐⭐⭐ Bom</option>
+            <option value="2">⭐⭐ Regular</option>
+            <option value="1">⭐ Ruim</option>
+          </select>
+          <label>Comentário</label>
+          <textarea id="avComentario" placeholder="O que o paciente disse?"></textarea>
+          <button class="btn btn-primary" type="submit">Registrar avaliação</button>
+        </form>
+      </div>
+
+      <div id="listaAvaliacoes"></div>
+    </section>
+
+    <!-- ===================== FINANCEIRO ===================== -->
+    <section class="view" id="view-financeiro">
+      <h2 class="view-heading">Financeiro</h2>
+      <p class="view-desc">Controle simples de entradas e saídas.</p>
+
+      <div class="summary-row">
+        <div class="summary-cell"><div class="v pos" id="finEntradas">R$ 0</div><div class="l">Entradas</div></div>
+        <div class="summary-cell"><div class="v neg" id="finSaidas">R$ 0</div><div class="l">Saídas</div></div>
+        <div class="summary-cell"><div class="v" id="finLucro">R$ 0</div><div class="l">Lucro</div></div>
+      </div>
+
+      <div class="card">
+        <h3>Novo lançamento</h3>
+        <form id="formFinanceiro" onsubmit="return addFinanceiro(event)">
+          <label>Tipo</label>
+          <select id="fTipo">
+            <option value="entrada">Entrada</option>
+            <option value="saida">Saída</option>
+          </select>
+          <label>Descrição</label>
+          <input type="text" id="fDescricao" placeholder="Ex: Consulta - João Silva" required>
+          <label>Valor (R$)</label>
+          <input type="number" id="fValor" step="0.01" min="0" placeholder="0,00" required>
+          <button class="btn btn-primary" type="submit">Adicionar lançamento</button>
+        </form>
+      </div>
+
+      <div id="listaFinanceiro"></div>
+    </section>
+
+    <!-- ===================== RELATÓRIOS ===================== -->
+    <section class="view" id="view-relatorios">
+      <h2 class="view-heading">Relatórios</h2>
+      <p class="view-desc">Panorama geral da clínica.</p>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="num" id="repPacientes">0</div><div class="label">Total de pacientes</div></div>
+        <div class="stat-card"><div class="num" id="repConsultas">0</div><div class="label">Consultas no total</div></div>
+        <div class="stat-card"><div class="num" id="repReceita">R$ 0</div><div class="label">Receita acumulada</div></div>
+        <div class="stat-card"><div class="num" id="repAvaliacao">0.0</div><div class="label">Nota média</div></div>
+      </div>
+
+      <div class="card">
+        <h3>Consultas por dia (últimos 7 dias)</h3>
+        <div class="chart-bars" id="chartConsultas"></div>
+      </div>
+    </section>
+
+    <!-- ===================== CONFIGURAÇÕES ===================== -->
+    <section class="view" id="view-configuracoes">
+      <h2 class="view-heading">Configurações</h2>
+      <p class="view-desc">Ajuste os dados e preferências da clínica.</p>
+
+      <div class="tabs">
+        <button class="tab active" data-cfg="perfil" onclick="mostrarConfig('perfil', this)">Perfil</button>
+        <button class="tab" data-cfg="seguranca" onclick="mostrarConfig('seguranca', this)">Segurança</button>
+        <button class="tab" data-cfg="backup" onclick="mostrarConfig('backup', this)">Backup</button>
+        <button class="tab" data-cfg="impressao" onclick="mostrarConfig('impressao', this)">Impressão</button>
+      </div>
+
+      <div class="card cfg-panel" id="cfg-perfil">
+        <h3>Perfil da clínica</h3>
+        <label>Nome da clínica</label>
+        <input type="text" id="cfgNome" value="Sorriso Clínica Odontológica">
+        <label>Telefone</label>
+        <input type="text" id="cfgTelefone" placeholder="(11) 3333-4444">
+        <label>Endereço</label>
+        <input type="text" id="cfgEndereco" placeholder="Rua Exemplo, 123 - São Paulo/SP">
+        <button class="btn btn-primary" onclick="salvarPerfilClinica()">Salvar alterações</button>
+      </div>
+
+      <div class="card cfg-panel" id="cfg-seguranca" style="display:none;">
+        <h3>Segurança</h3>
+        <label>Senha atual</label>
+        <input type="password" placeholder="••••••••">
+        <label>Nova senha</label>
+        <input type="password" placeholder="••••••••">
+        <button class="btn btn-primary" onclick="showToast('Senha atualizada (demonstração)')">Atualizar senha</button>
+      </div>
+
+      <div class="card cfg-panel" id="cfg-backup" style="display:none;">
+        <h3>Backup dos dados</h3>
+        <p class="view-desc" style="margin-bottom:12px;">Exporte um arquivo com todos os dados desta sessão.</p>
+        <button class="btn btn-outline" style="width:100%; margin-bottom:10px;" onclick="exportarBackup()">⬇ Exportar backup (.json)</button>
+        <p style="font-size:12px; color:var(--muted);">Nesta versão MVP os dados ficam apenas na memória do app. A próxima etapa é conectar um banco de dados real para backup automático.</p>
+      </div>
+
+      <div class="card cfg-panel" id="cfg-impressao" style="display:none;">
+        <h3>Impressão</h3>
+        <label>Cabeçalho dos documentos</label>
+        <input type="text" id="cfgCabecalho" placeholder="Ex: Sorriso Clínica Odontológica - CRO 12345">
+        <label>Rodapé dos documentos</label>
+        <input type="text" id="cfgRodape" placeholder="Ex: Atendimento com hora marcada">
+        <button class="btn btn-primary" onclick="showToast('Modelo de impressão salvo')">Salvar modelo</button>
+      </div>
+    </section>
+
+    <!-- ===================== PLANOS ===================== -->
+    <section class="view" id="view-planos">
+      <h2 class="view-heading">Planos</h2>
+      <p class="view-desc">Escolha o plano ideal para o tamanho da sua clínica.</p>
+
+      <div class="plan-card">
+        <h3>Básico</h3>
+        <div class="price">R$ 79<span>/mês</span></div>
+        <ul>
+          <li>Até 100 pacientes</li>
+          <li>Agenda de consultas</li>
+          <li>Confirmação manual</li>
+        </ul>
+        <button class="btn btn-outline" style="width:100%;" onclick="selecionarPlano('Básico', this)">Selecionar</button>
+      </div>
+
+      <div class="plan-card featured">
+        <span class="tag">Mais popular</span>
+        <h3>Pro</h3>
+        <div class="price">R$ 149<span>/mês</span></div>
+        <ul>
+          <li>Pacientes ilimitados</li>
+          <li>Financeiro completo</li>
+          <li>Relatórios e avaliações</li>
+          <li>Confirmação automática</li>
+        </ul>
+        <button class="btn btn-accent" style="width:100%;" onclick="selecionarPlano('Pro', this)">Selecionar</button>
+      </div>
+
+      <div class="plan-card">
+        <h3>Premium</h3>
+        <div class="price">R$ 259<span>/mês</span></div>
+        <ul>
+          <li>Tudo do plano Pro</li>
+          <li>Múltiplas unidades</li>
+          <li>Backup automático</li>
+          <li>Suporte prioritário</li>
+        </ul>
+        <button class="btn btn-outline" style="width:100%;" onclick="selecionarPlano('Premium', this)">Selecionar</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   ESTADO EM MEMÓRIA (MVP)
+   Próxima etapa do projeto: substituir por backend + banco de
+   dados real (ex: Node/Express + PostgreSQL) para persistência,
+   login multi-clínica e pagamentos.
+   ============================================================ */
+let pacientes = [
+  { id:1, nome:'Ana Beatriz Souza', telefone:'(11) 99887-1122', nascimento:'1994-03-12', obs:'Sem alergias conhecidas.' },
+  { id:2, nome:'Carlos Eduardo Lima', telefone:'(11) 98123-4455', nascimento:'1987-07-02', obs:'Convênio OdontoSaúde.' }
+];
+let consultas = [
+  { id:1, pacienteId:1, data: hojeISO(), hora:'09:00', procedimento:'Limpeza', status:'agendada', confirmacao:'pendente' },
+  { id:2, pacienteId:2, data: hojeISO(), hora:'14:30', procedimento:'Avaliação', status:'agendada', confirmacao:'confirmada' }
+];
+let avaliacoes = [
+  { id:1, paciente:'Ana Beatriz Souza', nota:5, comentario:'Atendimento excelente, super recomendo!' }
+];
+let financeiro = [
+  { id:1, tipo:'entrada', descricao:'Consulta - Ana Beatriz', valor:180 },
+  { id:2, tipo:'saida', descricao:'Material odontológico', valor:60 }
+];
+let planoAtual = null;
+let nextId = { paciente:3, consulta:3, avaliacao:2, financeiro:3 };
+
+function hojeISO(){
+  return new Date().toISOString().slice(0,10);
+}
+
+/* ============================================================
+   NAVEGAÇÃO
+   ============================================================ */
+const titulos = {
+  home: ['OdontoGestão','Sorriso Clínica Odontológica'],
+  pacientes: ['Pacientes','Cadastro e histórico'],
+  consultas: ['Consultas','Agenda da clínica'],
+  confirmacao: ['Confirmação','Consultas pendentes'],
+  avaliacoes: ['Avaliações','Feedback dos pacientes'],
+  financeiro: ['Financeiro','Entradas e saídas'],
+  relatorios: ['Relatórios','Visão geral'],
+  configuracoes: ['Configurações','Preferências da clínica'],
+  planos: ['Planos','Assinatura da clínica']
+};
+
+function showView(id){
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + id).classList.add('active');
+  document.getElementById('backBtn').classList.toggle('show', id !== 'home');
+  document.getElementById('topTitle').textContent = titulos[id][0];
+  document.getElementById('topSub').textContent = titulos[id][1];
+  window.scrollTo(0,0);
+
+  if(id === 'pacientes') renderPacientes();
+  if(id === 'consultas') { popularSelectPacientes(); renderConsultas('todas'); }
+  if(id === 'confirmacao') renderConfirmacao('pendente');
+  if(id === 'avaliacoes') renderAvaliacoes();
+  if(id === 'financeiro') renderFinanceiro();
+  if(id === 'relatorios') renderRelatorios();
+  if(id === 'home') renderHome();
+}
+
+function goHome(){ showView('home'); }
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ============================================================
+   HOME
+   ============================================================ */
+function renderHome(){
+  document.getElementById('statPacientes').textContent = pacientes.length;
+  document.getElementById('statConsultasHoje').textContent =
+    consultas.filter(c => c.data === hojeISO()).length;
+  document.getElementById('statPendentes').textContent =
+    consultas.filter(c => c.confirmacao === 'pendente').length;
+  const receita = financeiro.filter(f=>f.tipo==='entrada').reduce((s,f)=>s+f.valor,0);
+  document.getElementById('statReceita').textContent = formatMoeda(receita);
+}
+
+function formatMoeda(v){
+  return 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function iniciais(nome){
+  return nome.split(' ').filter(Boolean).slice(0,2).map(p=>p[0]).join('').toUpperCase();
+}
+
+/* ============================================================
+   PACIENTES
+   ============================================================ */
+function addPaciente(e){
+  e.preventDefault();
+  const nome = document.getElementById('pNome').value.trim();
+  const telefone = document.getElementById('pTelefone').value.trim();
+  const nascimento = document.getElementById('pNascimento').value;
+  const obs = document.getElementById('pObs').value.trim();
+  pacientes.push({ id: nextId.paciente++, nome, telefone, nascimento, obs });
+  document.getElementById('formPaciente').reset();
+  renderPacientes();
+  showToast('Paciente cadastrado com sucesso');
+  return false;
+}
+
+function excluirPaciente(id){
+  pacientes = pacientes.filter(p => p.id !== id);
+  renderPacientes();
+  showToast('Paciente removido');
+}
+
+function renderPacientes(){
+  const termo = (document.getElementById('buscaPaciente')?.value || '').toLowerCase();
+  const lista = document.getElementById('listaPacientes');
+  const filtrados = pacientes.filter(p => p.nome.toLowerCase().includes(termo));
+
+  if(filtrados.length === 0){
+    lista.innerHTML = `<div class="empty-state"><div class="e-icon">👤</div><p>Nenhum paciente encontrado.</p></div>`;
+    return;
+  }
+
+  lista.innerHTML = filtrados.map(p => `
+    <div class="list-item">
+      <div class="avatar">${iniciais(p.nome)}</div>
+      <div class="li-body">
+        <div class="li-title">${p.nome}</div>
+        <div class="li-sub">${p.telefone || 'Sem telefone'}${p.obs ? ' · ' + p.obs : ''}</div>
+      </div>
+      <div class="li-actions">
+        <button class="btn btn-danger btn-sm" onclick="excluirPaciente(${p.id})">Excluir</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   CONSULTAS
+   ============================================================ */
+function popularSelectPacientes(){
+  const sel = document.getElementById('cPaciente');
+  sel.innerHTML = pacientes.map(p => `<option value="${p.id}">${p.nome}</option>`).join('')
+    || '<option value="">Cadastre um paciente primeiro</option>';
+}
+
+function addConsulta(e){
+  e.preventDefault();
+  const pacienteId = Number(document.getElementById('cPaciente').value);
+  const data = document.getElementById('cData').value;
+  const hora = document.getElementById('cHora').value;
+  const procedimento = document.getElementById('cProcedimento').value.trim();
+  if(!pacienteId){ showToast('Cadastre um paciente antes de agendar'); return false; }
+  consultas.push({ id: nextId.consulta++, pacienteId, data, hora, procedimento, status:'agendada', confirmacao:'pendente' });
+  document.getElementById('formConsulta').reset();
+  renderConsultas('todas');
+  showToast('Consulta agendada');
+  return false;
+}
+
+function nomePaciente(id){
+  const p = pacientes.find(p => p.id === id);
+  return p ? p.nome : 'Paciente removido';
+}
+
+function marcarRealizada(id){
+  const c = consultas.find(c => c.id === id);
+  if(c) c.status = 'realizada';
+  renderConsultas(document.querySelector('#view-consultas .tab.active').dataset.ftr);
+  showToast('Consulta marcada como realizada');
+}
+
+function filtrarConsultas(filtro, btn){
+  document.querySelectorAll('#view-consultas .tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderConsultas(filtro);
+}
+
+function renderConsultas(filtro){
+  let lista = consultas;
+  if(filtro === 'agendadas') lista = consultas.filter(c => c.status === 'agendada');
+  if(filtro === 'realizadas') lista = consultas.filter(c => c.status === 'realizada');
+
+  const el = document.getElementById('listaConsultas');
+  if(lista.length === 0){
+    el.innerHTML = `<div class="empty-state"><div class="e-icon">📅</div><p>Nenhuma consulta por aqui ainda.</p></div>`;
+    return;
+  }
+
+  el.innerHTML = [...lista].sort((a,b)=> (a.data+a.hora).localeCompare(b.data+b.hora)).map(c => `
+    <div class="list-item">
+      <div class="avatar">${iniciais(nomePaciente(c.pacienteId))}</div>
+      <div class="li-body">
+        <div class="li-title">${nomePaciente(c.pacienteId)}</div>
+        <div class="li-sub">${formatarData(c.data)} às ${c.hora} · ${c.procedimento}</div>
+      </div>
+      <div class="li-actions">
+        ${c.status === 'agendada'
+          ? `<span class="badge badge-warning">Agendada</span><button class="btn btn-outline btn-sm" onclick="marcarRealizada(${c.id})">Concluir</button>`
+          : `<span class="badge badge-success">Realizada</span>`}
+      </div>
+    </div>
+  `).join('');
+}
+
+function formatarData(iso){
+  if(!iso) return '';
+  const [ano,mes,dia] = iso.split('-');
+  return `${dia}/${mes}/${ano}`;
+}
+
+/* ============================================================
+   CONFIRMAÇÃO
+   ============================================================ */
+function filtrarConfirmacao(filtro, btn){
+  document.querySelectorAll('#view-confirmacao .tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderConfirmacao(filtro);
+}
+
+function definirConfirmacao(id, status){
+  const c = consultas.find(c => c.id === id);
+  if(c) c.confirmacao = status;
+  renderConfirmacao(document.querySelector('#view-confirmacao .tab.active').dataset.ftc);
+  showToast(status === 'confirmada' ? 'Consulta confirmada' : 'Consulta cancelada');
+}
+
+function renderConfirmacao(filtro){
+  const lista = consultas.filter(c => c.confirmacao === filtro);
+  const el = document.getElementById('listaConfirmacao');
+
+  if(lista.length === 0){
+    el.innerHTML = `<div class="empty-state"><div class="e-icon">✅</div><p>Nada por aqui no momento.</p></div>`;
+    return;
+  }
+
+  el.innerHTML = lista.map(c => `
+    <div class="list-item">
+      <div class="avatar">${iniciais(nomePaciente(c.pacienteId))}</div>
+      <div class="li-body">
+        <div class="li-title">${nomePaciente(c.pacienteId)}</div>
+        <div class="li-sub">${formatarData(c.data)} às ${c.hora} · ${c.procedimento}</div>
+      </div>
+      <div class="li-actions">
+        ${filtro === 'pendente' ? `
+          <button class="btn btn-primary btn-sm" style="margin:0;" onclick="definirConfirmacao(${c.id},'confirmada')">Confirmar</button>
+          <button class="btn btn-danger btn-sm" onclick="definirConfirmacao(${c.id},'cancelada')">Cancelar</button>
+        ` : filtro === 'confirmada'
+          ? `<span class="badge badge-success">Confirmada</span>`
+          : `<span class="badge badge-danger">Cancelada</span>`}
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   AVALIAÇÕES
+   ============================================================ */
+function addAvaliacao(e){
+  e.preventDefault();
+  const paciente = document.getElementById('avPaciente').value.trim();
+  const nota = Number(document.getElementById('avNota').value);
+  const comentario = document.getElementById('avComentario').value.trim();
+  avaliacoes.push({ id: nextId.avaliacao++, paciente, nota, comentario });
+  document.getElementById('formAvaliacao').reset();
+  renderAvaliacoes();
+  showToast('Avaliação registrada');
+  return false;
+}
+
+function renderAvaliacoes(){
+  const media = avaliacoes.length
+    ? (avaliacoes.reduce((s,a)=>s+a.nota,0) / avaliacoes.length)
+    : 0;
+  document.getElementById('mediaAvaliacao').textContent = media.toFixed(1) + ' ⭐';
+  document.getElementById('totalAvaliacoes').textContent = avaliacoes.length;
+
+  const el = document.getElementById('listaAvaliacoes');
+  if(avaliacoes.length === 0){
+    el.innerHTML = `<div class="empty-state"><div class="e-icon">⭐</div><p>Ainda não há avaliações.</p></div>`;
+    return;
+  }
+
+  el.innerHTML = [...avaliacoes].reverse().map(a => `
+    <div class="list-item">
+      <div class="avatar">${iniciais(a.paciente)}</div>
+      <div class="li-body">
+        <div class="li-title">${a.paciente} · ${'⭐'.repeat(a.nota)}</div>
+        <div class="li-sub">${a.comentario || 'Sem comentário.'}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   FINANCEIRO
+   ============================================================ */
+function addFinanceiro(e){
+  e.preventDefault();
+  const tipo = document.getElementById('fTipo').value;
+  const descricao = document.getElementById('fDescricao').value.trim();
+  const valor = Number(document.getElementById('fValor').value);
+  financeiro.push({ id: nextId.financeiro++, tipo, descricao, valor });
+  document.getElementById('formFinanceiro').reset();
+  renderFinanceiro();
+  showToast('Lançamento adicionado');
+  return false;
+}
+
+function excluirFinanceiro(id){
+  financeiro = financeiro.filter(f => f.id !== id);
+  renderFinanceiro();
+}
+
+function renderFinanceiro(){
+  const entradas = financeiro.filter(f=>f.tipo==='entrada').reduce((s,f)=>s+f.valor,0);
+  const saidas = financeiro.filter(f=>f.tipo==='saida').reduce((s,f)=>s+f.valor,0);
+  document.getElementById('finEntradas').textContent = formatMoeda(entradas);
+  document.getElementById('finSaidas').textContent = formatMoeda(saidas);
+  const lucroEl = document.getElementById('finLucro');
+  lucroEl.textContent = formatMoeda(entradas - saidas);
+  lucroEl.className = 'v ' + (entradas - saidas >= 0 ? 'pos' : 'neg');
+
+  const el = document.getElementById('listaFinanceiro');
+  if(financeiro.length === 0){
+    el.innerHTML = `<div class="empty-state"><div class="e-icon">💰</div><p>Nenhum lançamento ainda.</p></div>`;
+    return;
+  }
+
+  el.innerHTML = [...financeiro].reverse().map(f => `
+    <div class="list-item">
+      <div class="avatar" style="background:${f.tipo==='entrada' ? 'rgba(46,155,111,0.14)' : 'rgba(217,83,79,0.12)'}; color:${f.tipo==='entrada' ? 'var(--success)' : 'var(--danger)'};">
+        ${f.tipo==='entrada' ? '↑' : '↓'}
+      </div>
+      <div class="li-body">
+        <div class="li-title">${f.descricao}</div>
+        <div class="li-sub">${f.tipo === 'entrada' ? 'Entrada' : 'Saída'}</div>
+      </div>
+      <div class="li-actions">
+        <span class="mono" style="font-weight:600; color:${f.tipo==='entrada' ? 'var(--success)' : 'var(--danger)'};">
+          ${f.tipo==='entrada' ? '+' : '-'} ${formatMoeda(f.valor)}
+        </span>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   RELATÓRIOS
+   ============================================================ */
+function renderRelatorios(){
+  document.getElementById('repPacientes').textContent = pacientes.length;
+  document.getElementById('repConsultas').textContent = consultas.length;
+  const receita = financeiro.filter(f=>f.tipo==='entrada').reduce((s,f)=>s+f.valor,0);
+  document.getElementById('repReceita').textContent = formatMoeda(receita);
+  const media = avaliacoes.length
+    ? (avaliacoes.reduce((s,a)=>s+a.nota,0) / avaliacoes.length)
+    : 0;
+  document.getElementById('repAvaliacao').textContent = media.toFixed(1);
+
+  // gráfico simples: consultas dos últimos 7 dias
+  const dias = [];
+  for(let i=6; i>=0; i--){
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    dias.push(d.toISOString().slice(0,10));
+  }
+  const contagens = dias.map(d => consultas.filter(c => c.data === d).length);
+  const max = Math.max(...contagens, 1);
+
+  const chart = document.getElementById('chartConsultas');
+  chart.innerHTML = dias.map((d,i) => {
+    const altura = Math.max(6, (contagens[i]/max) * 100);
+    const rotulo = d.slice(8,10) + '/' + d.slice(5,7);
+    return `<div class="bar-col">
+      <div class="bar" style="height:${altura}%;" title="${contagens[i]} consulta(s)"></div>
+      <div class="bar-label">${rotulo}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ============================================================
+   CONFIGURAÇÕES
+   ============================================================ */
+function mostrarConfig(nome, btn){
+  document.querySelectorAll('#view-configuracoes .tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.cfg-panel').forEach(p => p.style.display = 'none');
+  document.getElementById('cfg-' + nome).style.display = 'block';
+}
+
+function salvarPerfilClinica(){
+  const nome = document.getElementById('cfgNome').value.trim() || 'Sorriso Clínica Odontológica';
+  document.getElementById('topSub').textContent = nome;
+  titulos.home[1] = nome;
+  showToast('Perfil da clínica atualizado');
+}
+
+function exportarBackup(){
+  const dados = { pacientes, consultas, avaliacoes, financeiro };
+  const blob = new Blob([JSON.stringify(dados, null, 2)], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'backup-clinica.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  showToast('Backup exportado');
+}
+
+/* ============================================================
+   PLANOS
+   ============================================================ */
+function selecionarPlano(nome, btn){
+  planoAtual = nome;
+  document.querySelectorAll('.plan-card button').forEach(b => {
+    b.textContent = 'Selecionar';
+    b.className = b.closest('.plan-card').classList.contains('featured') ? 'btn btn-accent' : 'btn btn-outline';
+    b.style.width = '100%';
+  });
+  btn.textContent = 'Plano atual ✓';
+  btn.className = 'btn btn-primary';
+  btn.style.width = '100%';
+  showToast('Plano ' + nome + ' selecionado');
+}
+
+/* ============================================================
+   INICIALIZAÇÃO
+   ============================================================ */
+document.getElementById('cData') && (document.getElementById('cData').min = hojeISO());
+renderHome();
+</script>
+</body>
+</html>
