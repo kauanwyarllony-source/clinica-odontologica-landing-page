@@ -1,1024 +1,444 @@
-
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>OdontoGestão — SaaS para Clínicas</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OficinaGestão — O sistema completo para sua oficina mecânica</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #F5F9F8;
-    --surface: #FFFFFF;
-    --surface-2: #EEF5F4;
-    --border: #DCEAE7;
-    --primary: #10514D;
-    --primary-bright: #1C8C82;
-    --accent: #F2994A;
-    --accent-2: #E8823A;
-    --text: #14231F;
-    --muted: #5B7A75;
-    --success: #2E9B6F;
-    --danger: #D9534F;
-    --warning: #C97B1F;
-    --radius: 16px;
-    --radius-sm: 10px;
-    --shadow: 0 4px 18px rgba(16,81,77,0.08);
-    --shadow-lg: 0 12px 32px rgba(16,81,77,0.14);
+    --bg:#F1F2F0; --surface:#FFFFFF; --surface-2:#EDEEEA; --border:#DCDED8;
+    --primary:#20242B; --primary-bright:#3A4150; --accent:#F2A310; --accent-2:#D68C05;
+    --text:#15181D; --muted:#6B7280; --success:#16A34A; --danger:#DC2626;
+    --radius:18px; --radius-sm:12px;
+    --shadow:0 4px 18px rgba(20,24,29,0.08); --shadow-lg:0 16px 40px rgba(20,24,29,0.22);
   }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{ background:var(--bg); color:var(--text); font-family:'Inter',-apple-system,sans-serif; line-height:1.5; }
+  h1,h2,h3,.brand{ font-family:'Oswald',sans-serif; letter-spacing:-0.01em; }
+  .mono{ font-family:'JetBrains Mono',monospace; }
+  a{ color:inherit; text-decoration:none; }
+  img,svg{ display:block; max-width:100%; }
+  .wrap{ max-width:520px; margin:0 auto; padding:0 20px; }
+  section{ padding:52px 0; }
+  .eyebrow{ display:inline-flex; align-items:center; gap:6px; background:var(--surface-2); color:var(--primary); font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; padding:6px 12px; border-radius:20px; margin-bottom:14px; }
+  .section-title{ font-size:26px; font-weight:600; line-height:1.15; margin-bottom:10px; }
+  .section-desc{ color:var(--muted); font-size:14.5px; margin-bottom:28px; }
 
-  *{ box-sizing: border-box; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:14px 22px; border-radius:14px; border:none; font-weight:700; font-size:15px; cursor:pointer; }
+  .btn-accent{ background:var(--accent); color:#20242B; }
+  .btn-primary{ background:var(--primary); color:#fff; }
+  .btn-outline{ background:transparent; color:#fff; border:1.5px solid rgba(255,255,255,0.5); }
+  .btn-outline-dark{ background:transparent; color:var(--primary); border:1.5px solid var(--border); }
+  .btn-block{ width:100%; }
 
-  html,body{
-    margin:0; padding:0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', -apple-system, sans-serif;
-    -webkit-tap-highlight-color: transparent;
-  }
+  /* ---------- Nav ---------- */
+  header.nav{ position:sticky; top:0; z-index:50; background:rgba(241,242,240,0.9); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); }
+  .nav-row{ display:flex; align-items:center; justify-content:space-between; padding:14px 20px; max-width:520px; margin:0 auto; }
+  .nav-brand{ display:flex; align-items:center; gap:8px; font-weight:700; font-size:16px; }
+  .nav-brand .ic{ font-size:20px; }
+  .nav-cta{ background:var(--primary); color:#fff; padding:9px 16px; border-radius:10px; font-size:13px; font-weight:700; }
 
-  h1,h2,h3,.brand{
-    font-family: 'Fraunces', Georgia, serif;
-    letter-spacing: -0.01em;
-  }
+  /* ---------- Hero ---------- */
+  .hero{ background:radial-gradient(circle at 20% 0%, #2B3038, var(--primary) 60%); color:#fff; padding:44px 0 60px; position:relative; overflow:hidden; }
+  .hero-badge{ display:inline-flex; align-items:center; gap:6px; background:rgba(242,163,16,0.16); color:var(--accent); font-size:11.5px; font-weight:700; padding:6px 12px; border-radius:20px; margin-bottom:16px; }
+  .hero h1{ font-size:32px; font-weight:700; line-height:1.12; margin-bottom:14px; }
+  .hero h1 span{ color:var(--accent); }
+  .hero p{ font-size:15px; color:rgba(255,255,255,0.78); margin-bottom:26px; }
+  .hero-ctas{ display:flex; flex-direction:column; gap:10px; }
+  .hero-note{ font-size:12px; color:rgba(255,255,255,0.55); margin-top:12px; text-align:center; }
 
-  .mono{ font-family: 'JetBrains Mono', monospace; }
+  .mock{ margin-top:38px; background:var(--surface); border-radius:20px; padding:16px; box-shadow:var(--shadow-lg); }
+  .mock-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+  .mock-top .t{ font-family:'Oswald',sans-serif; font-weight:600; color:var(--primary); font-size:14px; }
+  .mock-top .d{ width:8px; height:8px; border-radius:50%; background:var(--success); }
+  .mock-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
+  .mock-card{ background:var(--surface-2); border-radius:10px; padding:10px; }
+  .mock-card .n{ font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--primary); font-size:16px; }
+  .mock-card .l{ font-size:10px; color:var(--muted); margin-top:2px; }
 
-  button{ font-family: inherit; cursor:pointer; }
+  /* ---------- Benefícios rápidos ---------- */
+  .benefits{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+  .benefit{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px 14px; text-align:center; }
+  .benefit .ic{ font-size:24px; margin-bottom:8px; }
+  .benefit .t{ font-weight:700; font-size:13px; }
+  .benefit .d{ font-size:11.5px; color:var(--muted); margin-top:3px; line-height:1.4; }
 
-  #app{
-    max-width: 520px;
-    margin: 0 auto;
-    min-height: 100vh;
-    background: var(--bg);
-    display:flex;
-    flex-direction: column;
-  }
+  /* ---------- Features ---------- */
+  .feat-card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; margin-bottom:14px; box-shadow:var(--shadow); }
+  .feat-head{ display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+  .feat-icon{ width:44px; height:44px; border-radius:13px; background:var(--surface-2); color:var(--accent-2); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+  .feat-head h3{ font-size:16.5px; font-weight:600; }
+  .feat-card ul{ list-style:none; }
+  .feat-card li{ font-size:13.5px; color:var(--muted); padding:5px 0 5px 20px; position:relative; }
+  .feat-card li::before{ content:"—"; position:absolute; left:0; color:var(--accent-2); font-weight:700; }
+  .feat-status{ display:inline-block; margin-top:10px; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; padding:4px 10px; border-radius:20px; }
+  .status-live{ background:rgba(22,163,74,0.12); color:var(--success); }
+  .status-soon{ background:rgba(242,163,16,0.16); color:var(--accent-2); }
 
-  /* ---------- Header ---------- */
-  header.topbar{
-    position: sticky; top:0; z-index: 20;
-    background: var(--primary);
-    color: #fff;
-    padding: 18px 18px 22px;
-    border-radius: 0 0 22px 22px;
-    box-shadow: var(--shadow-lg);
-  }
-  .topbar-row{
-    display:flex; align-items:center; gap:12px;
-  }
-  .back-btn{
-    display:none;
-    align-items:center; justify-content:center;
-    width:38px; height:38px;
-    border-radius: 12px;
-    background: rgba(255,255,255,0.14);
-    border: none;
-    color:#fff;
-    font-size: 18px;
-    flex-shrink:0;
-  }
-  .back-btn.show{ display:flex; }
-  .topbar-title{ flex:1; min-width:0; }
-  .topbar-title .brand{
-    font-size: 20px; font-weight: 600; margin:0; line-height:1.2;
-  }
-  .topbar-title .sub{
-    font-size: 12.5px; color: rgba(255,255,255,0.72); margin-top:2px;
-  }
-  .pulse-line{
-    margin-top: 14px; height: 22px; width:100%;
-    opacity:0.9;
-  }
-  .pulse-line path{
-    fill:none; stroke: var(--accent);
-    stroke-width:2; stroke-linecap:round; stroke-linejoin:round;
-    stroke-dasharray: 340; stroke-dashoffset: 340;
-    animation: draw 2.6s ease-in-out infinite;
-  }
-  @keyframes draw{
-    0%{ stroke-dashoffset: 340; }
-    45%{ stroke-dashoffset: 0; }
-    70%{ stroke-dashoffset: 0; }
-    100%{ stroke-dashoffset: -340; }
-  }
-  @media (prefers-reduced-motion: reduce){
-    .pulse-line path{ animation: none; stroke-dashoffset: 0; }
-  }
+  .status-list{ display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+  .status-chip{ font-size:11px; font-weight:700; padding:5px 10px; border-radius:20px; }
 
-  /* ---------- Main / views ---------- */
-  main{ flex:1; padding: 18px 18px 100px; }
-  .view{ display:none; animation: fadein .25s ease; }
-  .view.active{ display:block; }
-  @keyframes fadein{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+  /* ---------- Status OS visual ---------- */
+  .os-flow{ display:flex; gap:8px; overflow-x:auto; padding:4px 2px 12px; margin-top:14px; }
+  .os-step{ flex-shrink:0; background:var(--surface-2); border-radius:10px; padding:8px 12px; font-size:11.5px; font-weight:700; color:var(--primary); white-space:nowrap; }
+  .os-step.done{ background:var(--primary); color:#fff; }
 
-  .view-heading{
-    font-size: 22px; font-weight:600; margin: 4px 0 4px;
-  }
-  .view-desc{ color: var(--muted); font-size: 13.5px; margin: 0 0 18px; }
+  /* ---------- Tecnologia ---------- */
+  .tech-card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px; margin-bottom:10px; display:flex; gap:12px; align-items:flex-start; }
+  .tech-card .ic{ font-size:22px; flex-shrink:0; }
+  .tech-card .t{ font-weight:700; font-size:14px; }
+  .tech-card .d{ font-size:12.5px; color:var(--muted); margin-top:2px; line-height:1.5; }
 
-  /* ---------- Dashboard grid ---------- */
-  .stats-row{
-    display:grid; grid-template-columns: repeat(2,1fr); gap:10px;
-    margin: 16px 0 20px;
-  }
-  .stat-card{
-    background: var(--surface); border:1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 12px 14px;
-  }
-  .stat-card .num{ font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:600; color:var(--primary); }
-  .stat-card .label{ font-size:11.5px; color:var(--muted); margin-top:2px; }
-
-  .module-grid{
-    display:grid; grid-template-columns: repeat(2,1fr); gap:12px;
-  }
-  .module-card{
-    background: var(--surface); border:1px solid var(--border);
-    border-radius: var(--radius); padding: 16px 14px;
-    text-align:left; display:flex; flex-direction:column; gap:8px;
-    box-shadow: var(--shadow);
-    transition: transform .15s ease, box-shadow .15s ease;
-  }
-  .module-card:active{ transform: scale(0.97); }
-  .module-icon{
-    width:38px; height:38px; border-radius:11px;
-    display:flex; align-items:center; justify-content:center;
-    font-size:18px; background: var(--surface-2); color: var(--primary-bright);
-  }
-  .module-card .m-title{ font-weight:600; font-size:14.5px; }
-  .module-card .m-desc{ font-size:11.5px; color:var(--muted); line-height:1.4; }
-
-  /* ---------- Forms ---------- */
-  .card{
-    background: var(--surface); border:1px solid var(--border);
-    border-radius: var(--radius); padding:16px; margin-bottom:16px;
-    box-shadow: var(--shadow);
-  }
-  .card h3{ margin:0 0 12px; font-size:15.5px; }
-  label{ display:block; font-size:12.5px; color:var(--muted); margin: 10px 0 4px; }
-  input, select, textarea{
-    width:100%; padding: 10px 12px; border-radius: var(--radius-sm);
-    border: 1px solid var(--border); background: var(--surface); color: var(--text);
-    font-size: 14px; font-family: inherit;
-  }
-  input:focus, select:focus, textarea:focus{
-    outline: 2px solid var(--primary-bright); outline-offset:1px;
-  }
-  textarea{ resize: vertical; min-height:70px; }
-
-  .btn{
-    display:inline-flex; align-items:center; justify-content:center; gap:6px;
-    padding: 11px 16px; border-radius: 12px; border:none;
-    font-weight:600; font-size:14px;
-  }
-  .btn-primary{ background: var(--primary); color:#fff; width:100%; margin-top:14px; }
-  .btn-primary:active{ background: var(--primary-bright); }
-  .btn-accent{ background: var(--accent); color:#fff; }
-  .btn-outline{ background: transparent; color: var(--primary); border:1px solid var(--border); }
-  .btn-danger{ background: rgba(217,83,79,0.1); color: var(--danger); }
-  .btn-sm{ padding: 7px 11px; font-size:12.5px; border-radius:9px; }
-
-  .search-box{ position:relative; margin-bottom:14px; }
-  .search-box input{ padding-left:34px; }
-  .search-box .icon{ position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--muted); }
-
-  /* ---------- Lists ---------- */
-  .list-item{
-    background: var(--surface); border:1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom:10px;
-    display:flex; align-items:center; gap:12px;
-  }
-  .avatar{
-    width:38px; height:38px; border-radius:50%; flex-shrink:0;
-    background: var(--surface-2); color: var(--primary);
-    display:flex; align-items:center; justify-content:center;
-    font-weight:700; font-size:13.5px;
-  }
-  .li-body{ flex:1; min-width:0; }
-  .li-title{ font-weight:600; font-size:14px; }
-  .li-sub{ font-size:12px; color:var(--muted); margin-top:1px; }
-  .li-actions{ display:flex; gap:6px; flex-shrink:0; }
-
-  .badge{
-    font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:20px;
-    text-transform:uppercase; letter-spacing:.03em;
-  }
-  .badge-success{ background: rgba(46,155,111,0.12); color: var(--success); }
-  .badge-warning{ background: rgba(242,153,74,0.14); color: var(--warning); }
-  .badge-danger{ background: rgba(217,83,79,0.12); color: var(--danger); }
-  .badge-muted{ background: var(--surface-2); color: var(--muted); }
-
-  .empty-state{
-    text-align:center; padding: 34px 10px; color: var(--muted);
-  }
-  .empty-state .e-icon{ font-size:30px; margin-bottom:8px; }
-  .empty-state p{ font-size:13px; margin:0; }
-
-  .tabs{ display:flex; gap:6px; margin-bottom:16px; overflow-x:auto; }
-  .tab{
-    padding:8px 13px; border-radius:20px; font-size:12.5px; font-weight:600;
-    background: var(--surface); border:1px solid var(--border); color:var(--muted); white-space:nowrap;
-  }
-  .tab.active{ background: var(--primary); color:#fff; border-color:var(--primary); }
-
-  .summary-row{ display:grid; grid-template-columns: repeat(3,1fr); gap:8px; margin-bottom:16px; }
-  .summary-cell{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px; text-align:center; }
-  .summary-cell .v{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:14.5px; }
-  .summary-cell .l{ font-size:10.5px; color:var(--muted); margin-top:2px; }
-  .v.pos{ color: var(--success); } .v.neg{ color: var(--danger); }
-
-  .plan-card{
-    border-radius: var(--radius); padding:18px; margin-bottom:14px;
-    border:1px solid var(--border); background:var(--surface); position:relative;
-  }
-  .plan-card.featured{ border:2px solid var(--accent); box-shadow: var(--shadow-lg); }
-  .plan-card .tag{
-    position:absolute; top:-10px; right:16px; background:var(--accent); color:#fff;
-    font-size:10.5px; font-weight:700; padding:4px 10px; border-radius:20px;
-  }
-  .plan-card .price{ font-family:'Fraunces',serif; font-size:26px; font-weight:600; color:var(--primary); margin:6px 0; }
-  .plan-card .price span{ font-size:12px; color:var(--muted); font-family:'Inter'; font-weight:500; }
-  .plan-card ul{ list-style:none; padding:0; margin:12px 0; }
-  .plan-card li{ font-size:13px; padding:4px 0; color:var(--text); }
+  /* ---------- Planos ---------- */
+  .plan-card{ border-radius:var(--radius); padding:22px; margin-bottom:14px; border:1px solid var(--border); background:var(--surface); position:relative; }
+  .plan-card.featured{ border:2px solid var(--accent); box-shadow:var(--shadow-lg); }
+  .plan-card .tag{ position:absolute; top:-11px; right:18px; background:var(--accent); color:#20242B; font-size:10.5px; font-weight:700; padding:5px 12px; border-radius:20px; }
+  .plan-card h3{ font-size:17px; }
+  .plan-card .price{ font-family:'Oswald',sans-serif; font-size:30px; font-weight:700; color:var(--primary); margin:8px 0; }
+  .plan-card .price span{ font-size:12.5px; color:var(--muted); font-family:'Inter'; font-weight:500; }
+  .plan-card ul{ list-style:none; margin:14px 0; }
+  .plan-card li{ font-size:13.5px; padding:5px 0; }
   .plan-card li::before{ content:"✓ "; color:var(--success); font-weight:700; }
 
-  .chart-bars{ display:flex; align-items:flex-end; gap:8px; height:120px; margin: 10px 0 6px; }
-  .bar-col{ flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; }
-  .bar{ width:100%; border-radius: 6px 6px 0 0; background: linear-gradient(180deg, var(--primary-bright), var(--primary)); }
-  .bar-label{ font-size:10px; color:var(--muted); }
+  /* ---------- FAQ ---------- */
+  .faq-item{ border-bottom:1px solid var(--border); }
+  .faq-q{ width:100%; text-align:left; background:none; border:none; padding:16px 0; display:flex; justify-content:space-between; align-items:center; font-weight:600; font-size:14px; cursor:pointer; }
+  .faq-q .x{ color:var(--accent-2); font-size:18px; transition:transform .2s ease; flex-shrink:0; margin-left:10px; }
+  .faq-item.open .faq-q .x{ transform:rotate(45deg); }
+  .faq-a{ max-height:0; overflow:hidden; transition:max-height .25s ease; }
+  .faq-item.open .faq-a{ max-height:200px; }
+  .faq-a p{ font-size:13px; color:var(--muted); padding-bottom:16px; line-height:1.6; }
 
-  .toast{
-    position:fixed; left:50%; bottom:26px; transform: translateX(-50%) translateY(20px);
-    background: var(--text); color:#fff; padding:11px 18px; border-radius:12px;
-    font-size:13px; opacity:0; pointer-events:none; transition: all .25s ease;
-    max-width: 90%; text-align:center; z-index:50;
-  }
-  .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
+  /* ---------- CTA final ---------- */
+  .cta-final{ background:linear-gradient(135deg, var(--primary), #0E1116); color:#fff; border-radius:24px; padding:32px 24px; text-align:center; margin:0 20px; }
+  .cta-final h2{ font-size:22px; margin-bottom:8px; }
+  .cta-final p{ font-size:13.5px; color:rgba(255,255,255,0.75); margin-bottom:20px; }
 
-  ::-webkit-scrollbar{ width:0; height:0; }
+  footer{ padding:36px 20px 40px; text-align:center; }
+  footer .brand{ font-size:15px; font-weight:700; margin-bottom:6px; }
+  footer p{ font-size:12px; color:var(--muted); }
+  footer .links{ display:flex; justify-content:center; gap:16px; margin:14px 0; font-size:12.5px; color:var(--muted); flex-wrap:wrap; }
 </style>
 </head>
 <body>
-<div id="app">
 
-  <header class="topbar">
-    <div class="topbar-row">
-      <button class="back-btn" id="backBtn" onclick="goHome()" aria-label="Voltar">←</button>
-      <div class="topbar-title">
-        <p class="brand" id="topTitle">OdontoGestão</p>
-        <div class="sub" id="topSub">Sorriso Clínica Odontológica</div>
-      </div>
+  <header class="nav">
+    <div class="nav-row">
+      <div class="nav-brand"><span class="ic">🔧</span> OficinaGestão</div>
+      <a href="#planos" class="nav-cta">Ver planos</a>
     </div>
-    <svg class="pulse-line" viewBox="0 0 340 22" preserveAspectRatio="none">
-      <path d="M0 11 L60 11 L74 2 L88 20 L100 11 L340 11" />
-    </svg>
   </header>
 
-  <main>
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <div class="wrap">
+      <span class="hero-badge">🔧 Feito para oficinas mecânicas</span>
+      <h1>Sua oficina <span>organizada</span>, do orçamento à entrega.</h1>
+      <p>Clientes, veículos, ordens de serviço, agenda, estoque e financeiro — tudo em um só lugar, do celular ou do computador.</p>
+      <div class="hero-ctas">
+        <a href="#planos" class="btn btn-accent btn-block">Começar agora</a>
+        <a href="#recursos" class="btn btn-outline btn-block">Ver como funciona</a>
+      </div>
+      <p class="hero-note">Sem necessidade de instalar nada — funciona direto no navegador.</p>
 
-    <!-- ===================== HOME ===================== -->
-    <section class="view active" id="view-home">
-      <h1 class="view-heading">Boa tarde 👋</h1>
-      <p class="view-desc">Aqui está o resumo de hoje da sua clínica.</p>
+      <div class="mock">
+        <div class="mock-top"><span class="t">Painel da oficina</span><span class="d"></span></div>
+        <div class="mock-grid">
+          <div class="mock-card"><div class="n">18</div><div class="l">Veículos na oficina</div></div>
+          <div class="mock-card"><div class="n">7</div><div class="l">OS em aberto</div></div>
+          <div class="mock-card"><div class="n">5</div><div class="l">Agendados hoje</div></div>
+          <div class="mock-card"><div class="n">R$ 12,4k</div><div class="l">Faturamento do mês</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-      <div class="stats-row">
-        <div class="stat-card"><div class="num" id="statPacientes">0</div><div class="label">Pacientes ativos</div></div>
-        <div class="stat-card"><div class="num" id="statConsultasHoje">0</div><div class="label">Consultas hoje</div></div>
-        <div class="stat-card"><div class="num" id="statPendentes">0</div><div class="label">Confirmações pendentes</div></div>
-        <div class="stat-card"><div class="num" id="statReceita">R$ 0</div><div class="label">Receita do mês</div></div>
+  <!-- ===================== BENEFÍCIOS ===================== -->
+  <section>
+    <div class="wrap">
+      <div class="benefits">
+        <div class="benefit"><div class="ic">📋</div><div class="t">Menos papel</div><div class="d">Fim das fichas soltas e cadernos de anotação</div></div>
+        <div class="benefit"><div class="ic">⏱️</div><div class="t">Mais agilidade</div><div class="d">Orçamento e OS em PDF na hora</div></div>
+        <div class="benefit"><div class="ic">📈</div><div class="t">Mais controle</div><div class="d">Você sabe exatamente quanto entra e sai</div></div>
+        <div class="benefit"><div class="ic">🔔</div><div class="t">Menos esquecimento</div><div class="d">Agenda e lembretes de revisão</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== RECURSOS ===================== -->
+  <section id="recursos">
+    <div class="wrap">
+      <span class="eyebrow">Tudo que sua oficina precisa</span>
+      <h2 class="section-title">Um sistema, todos os módulos</h2>
+      <p class="section-desc">Cada parte da rotina da oficina organizada em um só painel, com tudo se conectando automaticamente.</p>
+
+      <div class="feat-card">
+        <div class="feat-head"><div class="feat-icon">🚗</div><h3>Dashboard</h3></div>
+        <ul>
+          <li>Veículos na oficina em tempo real</li>
+          <li>Ordens de serviço abertas</li>
+          <li>Faturamento do mês</li>
+          <li>Serviços agendados para hoje</li>
+          <li>Avisos importantes</li>
+        </ul>
+        <span class="feat-status status-live">Disponível</span>
       </div>
 
-      <div class="module-grid">
-        <button class="module-card" onclick="showView('pacientes')">
-          <div class="module-icon">👤</div>
-          <div class="m-title">Pacientes</div>
-          <div class="m-desc">Cadastro, busca e histórico</div>
-        </button>
-        <button class="module-card" onclick="showView('consultas')">
-          <div class="module-icon">📅</div>
-          <div class="m-title">Consultas</div>
-          <div class="m-desc">Agenda e novos atendimentos</div>
-        </button>
-        <button class="module-card" onclick="showView('confirmacao')">
-          <div class="module-icon">✅</div>
-          <div class="m-title">Confirmação</div>
-          <div class="m-desc">Confirmar ou cancelar</div>
-        </button>
-        <button class="module-card" onclick="showView('avaliacoes')">
-          <div class="module-icon">⭐</div>
-          <div class="m-title">Avaliações</div>
-          <div class="m-desc">Feedback dos pacientes</div>
-        </button>
-        <button class="module-card" onclick="showView('financeiro')">
-          <div class="module-icon">💰</div>
-          <div class="m-title">Financeiro</div>
-          <div class="m-desc">Entradas, saídas e lucro</div>
-        </button>
-        <button class="module-card" onclick="showView('relatorios')">
-          <div class="module-icon">📊</div>
-          <div class="m-title">Relatórios</div>
-          <div class="m-desc">Visão geral da clínica</div>
-        </button>
-        <button class="module-card" onclick="showView('configuracoes')">
-          <div class="module-icon">⚙️</div>
-          <div class="m-title">Configurações</div>
-          <div class="m-desc">Clínica, backup, segurança</div>
-        </button>
-        <button class="module-card" onclick="showView('planos')">
-          <div class="module-icon">💳</div>
-          <div class="m-title">Planos</div>
-          <div class="m-desc">Assinatura da clínica</div>
-        </button>
-      </div>
-    </section>
-
-    <!-- ===================== PACIENTES ===================== -->
-    <section class="view" id="view-pacientes">
-      <h2 class="view-heading">Pacientes</h2>
-      <p class="view-desc">Cadastre e acompanhe o histórico de cada paciente.</p>
-
-      <div class="card">
-        <h3>Novo paciente</h3>
-        <form id="formPaciente" onsubmit="return addPaciente(event)">
-          <label>Nome completo</label>
-          <input type="text" id="pNome" placeholder="Ex: Ana Beatriz Souza" required>
-          <label>Telefone</label>
-          <input type="tel" id="pTelefone" placeholder="(11) 99999-0000" required>
-          <label>Data de nascimento</label>
-          <input type="date" id="pNascimento">
-          <label>Observações</label>
-          <textarea id="pObs" placeholder="Alergias, convênio, preferências..."></textarea>
-          <button class="btn btn-primary" type="submit">Salvar paciente</button>
-        </form>
+      <div class="feat-card">
+        <div class="feat-head"><div class="feat-icon">👥</div><h3>Clientes</h3></div>
+        <ul>
+          <li>Cadastro completo</li>
+          <li>Histórico de serviços por cliente</li>
+          <li>Telefones e endereço</li>
+        </ul>
+        <span class="feat-status status-live">Disponível</span>
       </div>
 
-      <div class="search-box">
-        <span class="icon">🔍</span>
-        <input type="text" id="buscaPaciente" placeholder="Buscar paciente por nome..." oninput="renderPacientes()">
+      <div class="feat-card">
+        <div class="feat-head"><div class="feat-icon">🚙</div><h3>Veículos</h3></div>
+        <ul>
+          <li>Placa, modelo e marca</li>
+          <li>Ano, cor e chassi</li>
+          <li>Quilometragem atualizada a cada visita</li>
+        </ul>
+        <span class="feat-status status-live">Disponível</span>
       </div>
 
-      <div id="listaPacientes"></div>
-    </section>
-
-    <!-- ===================== CONSULTAS ===================== -->
-    <section class="view" id="view-consultas">
-      <h2 class="view-heading">Consultas</h2>
-      <p class="view-desc">Agende novos atendimentos e acompanhe a agenda.</p>
-
-      <div class="card">
-        <h3>Nova consulta</h3>
-        <form id="formConsulta" onsubmit="return addConsulta(event)">
-          <label>Paciente</label>
-          <select id="cPaciente" required></select>
-          <label>Data</label>
-          <input type="date" id="cData" required>
-          <label>Hora</label>
-          <input type="time" id="cHora" required>
-          <label>Procedimento</label>
-          <input type="text" id="cProcedimento" placeholder="Ex: Limpeza, Canal, Avaliação" required>
-          <button class="btn btn-primary" type="submit">Agendar consulta</button>
-        </form>
+      <div class="feat-card">
+        <div class="feat-head"><div class="feat-icon">🔧</div><h3>Ordem de Serviço</h3></div>
+        <ul>
+          <li>Defeito informado e diagnóstico</li>
+          <li>Peças utilizadas e mão de obra</li>
+          <li>Fotos do veículo anexadas à OS</li>
+        </ul>
+        <div class="os-flow">
+          <div class="os-step done">Recebido</div>
+          <div class="os-step">Em diagnóstico</div>
+          <div class="os-step">Em manutenção</div>
+          <div class="os-step">Aguardando peças</div>
+          <div class="os-step">Pronto</div>
+          <div class="os-step">Entregue</div>
+        </div>
+        <span class="feat-status status-live">Disponível</span>
       </div>
 
-      <div class="tabs">
-        <button class="tab active" data-ftr="todas" onclick="filtrarConsultas('todas', this)">Todas</button>
-        <button class="tab" data-ftr="agendadas" onclick="filtrarConsultas('agendadas', this)">Agendadas</button>
-        <button class="tab" data-ftr="realizadas" onclick="filtrarConsultas('realizadas', this)">Realizadas</button>
+      <div class="feat-card">
+        <div class="feat-head"><div class="feat-icon">📅</div><h3>Agenda</h3></div>
+        <ul>
+          <li>Calendário mensal completo</li>
+          <li>Agendamento de revisões</li>
+          <li>Agendamento de troca de óleo</li>
+          <li>Lembretes internos</li>
+        </ul>
+        <span class="feat-status status-live">Disponível</span>
       </div>
 
-      <div id="listaConsultas"></div>
-    </section>
-
-    <!-- ===================== CONFIRMAÇÃO ===================== -->
-    <section class="view" id="view-confirmacao">
-      <h2 class="view-heading">Confirmação</h2>
-      <p class="view-desc">Confirme ou cancele as consultas pendentes.</p>
-
-      <div class="tabs">
-        <button class="tab active" data-ftc="pendente" onclick="filtrarConfirmacao('pendente', this)">Pendentes</button>
-        <button class="tab" data-ftc="confirmada" onclick="filtrarConfirmacao('confirmada', this)">Confirmadas</button>
-        <button class="tab" data-ftc="cancelada" onclick="filtrarConfirmacao('cancelada', this)">Canceladas</button>
+      <div class="feat-card">
+        <div class="feat-head"><div class="feat-icon">📦</div><h3>Estoque</h3></div>
+        <ul>
+          <li>Peças, óleo, pneus e filtros</li>
+          <li>Controle de quantidade</li>
+          <li>Alerta automático de estoque baixo</li>
+        </ul>
+        <span class="feat-status status-live">Disponível</span>
       </div>
 
-      <div id="listaConfirmacao"></div>
-    </section>
-
-    <!-- ===================== AVALIAÇÕES ===================== -->
-    <section class="view" id="view-avaliacoes">
-      <h2 class="view-heading">Avaliações</h2>
-      <p class="view-desc">Veja o que os pacientes acham da clínica.</p>
-
-      <div class="stat-card" style="margin-bottom:16px;">
-        <div class="num" id="mediaAvaliacao">0.0 ⭐</div>
-        <div class="label">Média geral (<span id="totalAvaliacoes">0</span> avaliações)</div>
+      <div class="feat-card">
+        <div class="feat-head"><div class="feat-icon">💰</div><h3>Financeiro</h3></div>
+        <ul>
+          <li>Receitas e despesas</li>
+          <li>Fluxo de caixa</li>
+          <li>Contas a pagar e a receber</li>
+        </ul>
+        <span class="feat-status status-live">Disponível</span>
       </div>
 
-      <div class="card">
-        <h3>Nova avaliação</h3>
-        <form id="formAvaliacao" onsubmit="return addAvaliacao(event)">
-          <label>Paciente</label>
-          <input type="text" id="avPaciente" placeholder="Nome do paciente" required>
-          <label>Nota</label>
-          <select id="avNota" required>
-            <option value="5">⭐⭐⭐⭐⭐ Excelente</option>
-            <option value="4">⭐⭐⭐⭐ Muito bom</option>
-            <option value="3">⭐⭐⭐ Bom</option>
-            <option value="2">⭐⭐ Regular</option>
-            <option value="1">⭐ Ruim</option>
-          </select>
-          <label>Comentário</label>
-          <textarea id="avComentario" placeholder="O que o paciente disse?"></textarea>
-          <button class="btn btn-primary" type="submit">Registrar avaliação</button>
-        </form>
+      <div class="feat-card">
+        <div class="feat-head"><div class="feat-icon">📄</div><h3>Documentos em PDF</h3></div>
+        <ul>
+          <li>Orçamento</li>
+          <li>Ordem de Serviço</li>
+          <li>Recibo</li>
+          <li>Nota de serviço</li>
+        </ul>
+        <span class="feat-status status-live">Disponível</span>
       </div>
 
-      <div id="listaAvaliacoes"></div>
-    </section>
-
-    <!-- ===================== FINANCEIRO ===================== -->
-    <section class="view" id="view-financeiro">
-      <h2 class="view-heading">Financeiro</h2>
-      <p class="view-desc">Controle simples de entradas e saídas.</p>
-
-      <div class="summary-row">
-        <div class="summary-cell"><div class="v pos" id="finEntradas">R$ 0</div><div class="l">Entradas</div></div>
-        <div class="summary-cell"><div class="v neg" id="finSaidas">R$ 0</div><div class="l">Saídas</div></div>
-        <div class="summary-cell"><div class="v" id="finLucro">R$ 0</div><div class="l">Lucro</div></div>
+      <div class="feat-card">
+        <div class="feat-head"><div class="feat-icon">📊</div><h3>Relatórios</h3></div>
+        <ul>
+          <li>Clientes mais frequentes</li>
+          <li>Serviços mais vendidos</li>
+          <li>Lucro mensal</li>
+          <li>Estoque e funcionários</li>
+        </ul>
+        <span class="feat-status status-live">Disponível</span>
       </div>
 
-      <div class="card">
-        <h3>Novo lançamento</h3>
-        <form id="formFinanceiro" onsubmit="return addFinanceiro(event)">
-          <label>Tipo</label>
-          <select id="fTipo">
-            <option value="entrada">Entrada</option>
-            <option value="saida">Saída</option>
-          </select>
-          <label>Descrição</label>
-          <input type="text" id="fDescricao" placeholder="Ex: Consulta - João Silva" required>
-          <label>Valor (R$)</label>
-          <input type="number" id="fValor" step="0.01" min="0" placeholder="0,00" required>
-          <button class="btn btn-primary" type="submit">Adicionar lançamento</button>
-        </form>
+      <div class="feat-card">
+        <div class="feat-head"><div class="feat-icon">👨‍🔧</div><h3>Funcionários</h3></div>
+        <ul>
+          <li>Cadastro de mecânicos e função</li>
+          <li>Comissão por serviço</li>
+          <li>Agenda individual</li>
+        </ul>
+        <span class="feat-status status-live">Disponível</span>
       </div>
 
-      <div id="listaFinanceiro"></div>
-    </section>
-
-    <!-- ===================== RELATÓRIOS ===================== -->
-    <section class="view" id="view-relatorios">
-      <h2 class="view-heading">Relatórios</h2>
-      <p class="view-desc">Panorama geral da clínica.</p>
-
-      <div class="stats-row">
-        <div class="stat-card"><div class="num" id="repPacientes">0</div><div class="label">Total de pacientes</div></div>
-        <div class="stat-card"><div class="num" id="repConsultas">0</div><div class="label">Consultas no total</div></div>
-        <div class="stat-card"><div class="num" id="repReceita">R$ 0</div><div class="label">Receita acumulada</div></div>
-        <div class="stat-card"><div class="num" id="repAvaliacao">0.0</div><div class="label">Nota média</div></div>
+      <div class="feat-card">
+        <div class="feat-head"><div class="feat-icon">⚙️</div><h3>Configurações</h3></div>
+        <ul>
+          <li>Dados da oficina</li>
+          <li>Horário de funcionamento</li>
+          <li>Temas visuais</li>
+          <li>Backup dos dados</li>
+        </ul>
+        <span class="feat-status status-live">Disponível</span>
       </div>
 
-      <div class="card">
-        <h3>Consultas por dia (últimos 7 dias)</h3>
-        <div class="chart-bars" id="chartConsultas"></div>
+      <div class="feat-card">
+        <div class="feat-head"><div class="feat-icon">💳</div><h3>Pagamentos</h3></div>
+        <ul>
+          <li>Pix, cartão e dinheiro</li>
+          <li>Registro manual por OS</li>
+          <li>Integração com Mercado Pago</li>
+        </ul>
+        <span class="feat-status status-soon">Cobrança online em breve</span>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- ===================== CONFIGURAÇÕES ===================== -->
-    <section class="view" id="view-configuracoes">
-      <h2 class="view-heading">Configurações</h2>
-      <p class="view-desc">Ajuste os dados e preferências da clínica.</p>
+  <!-- ===================== TECNOLOGIA ===================== -->
+  <section style="background:var(--surface-2);">
+    <div class="wrap">
+      <span class="eyebrow">Por trás do sistema</span>
+      <h2 class="section-title">Feito pra crescer com a sua oficina</h2>
+      <p class="section-desc">A base já funciona hoje. Estes recursos avançados estão em desenvolvimento.</p>
 
-      <div class="tabs">
-        <button class="tab active" data-cfg="perfil" onclick="mostrarConfig('perfil', this)">Perfil</button>
-        <button class="tab" data-cfg="seguranca" onclick="mostrarConfig('seguranca', this)">Segurança</button>
-        <button class="tab" data-cfg="backup" onclick="mostrarConfig('backup', this)">Backup</button>
-        <button class="tab" data-cfg="impressao" onclick="mostrarConfig('impressao', this)">Impressão</button>
+      <div class="tech-card">
+        <div class="ic">🔐</div>
+        <div><div class="t">Login com usuários e permissões</div><div class="d">Cada funcionário com seu próprio acesso, dono vê tudo, mecânico vê só o que precisa.</div></div>
       </div>
-
-      <div class="card cfg-panel" id="cfg-perfil">
-        <h3>Perfil da clínica</h3>
-        <label>Nome da clínica</label>
-        <input type="text" id="cfgNome" value="Sorriso Clínica Odontológica">
-        <label>Telefone</label>
-        <input type="text" id="cfgTelefone" placeholder="(11) 3333-4444">
-        <label>Endereço</label>
-        <input type="text" id="cfgEndereco" placeholder="Rua Exemplo, 123 - São Paulo/SP">
-        <button class="btn btn-primary" onclick="salvarPerfilClinica()">Salvar alterações</button>
+      <div class="tech-card">
+        <div class="ic">☁️</div>
+        <div><div class="t">Banco de dados na nuvem</div><div class="d">Seus dados salvos com segurança, acessíveis de qualquer aparelho.</div></div>
       </div>
-
-      <div class="card cfg-panel" id="cfg-seguranca" style="display:none;">
-        <h3>Segurança</h3>
-        <label>Senha atual</label>
-        <input type="password" placeholder="••••••••">
-        <label>Nova senha</label>
-        <input type="password" placeholder="••••••••">
-        <button class="btn btn-primary" onclick="showToast('Senha atualizada (demonstração)')">Atualizar senha</button>
+      <div class="tech-card">
+        <div class="ic">📱</div>
+        <div><div class="t">Confirmação automática via WhatsApp</div><div class="d">O cliente recebe e confirma o agendamento sem ninguém precisar digitar nada.</div></div>
       </div>
-
-      <div class="card cfg-panel" id="cfg-backup" style="display:none;">
-        <h3>Backup dos dados</h3>
-        <p class="view-desc" style="margin-bottom:12px;">Exporte um arquivo com todos os dados desta sessão.</p>
-        <button class="btn btn-outline" style="width:100%; margin-bottom:10px;" onclick="exportarBackup()">⬇ Exportar backup (.json)</button>
-        <p style="font-size:12px; color:var(--muted);">Nesta versão MVP os dados ficam apenas na memória do app. A próxima etapa é conectar um banco de dados real para backup automático.</p>
+      <div class="tech-card">
+        <div class="ic">🔔</div>
+        <div><div class="t">Notificações push</div><div class="d">Avisos chegando direto no celular, mesmo com o app fechado.</div></div>
       </div>
-
-      <div class="card cfg-panel" id="cfg-impressao" style="display:none;">
-        <h3>Impressão</h3>
-        <label>Cabeçalho dos documentos</label>
-        <input type="text" id="cfgCabecalho" placeholder="Ex: Sorriso Clínica Odontológica - CRO 12345">
-        <label>Rodapé dos documentos</label>
-        <input type="text" id="cfgRodape" placeholder="Ex: Atendimento com hora marcada">
-        <button class="btn btn-primary" onclick="showToast('Modelo de impressão salvo')">Salvar modelo</button>
+      <div class="status-list">
+        <span class="status-chip status-live">🟢 Cadastros, agenda, PDF e relatórios — já funcionam</span>
+        <span class="status-chip status-soon">🟡 Login em nuvem, WhatsApp, notificações e pagamento online — em desenvolvimento</span>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- ===================== PLANOS ===================== -->
-    <section class="view" id="view-planos">
-      <h2 class="view-heading">Planos</h2>
-      <p class="view-desc">Escolha o plano ideal para o tamanho da sua clínica.</p>
+  <!-- ===================== PLANOS ===================== -->
+  <section id="planos">
+    <div class="wrap">
+      <span class="eyebrow">Planos</span>
+      <h2 class="section-title">Escolha o plano da sua oficina</h2>
+      <p class="section-desc">Comece pequeno e mude de plano quando precisar.</p>
 
       <div class="plan-card">
         <h3>Básico</h3>
-        <div class="price">R$ 79<span>/mês</span></div>
+        <div class="price">R$ 89<span>/mês</span></div>
         <ul>
-          <li>Até 100 pacientes</li>
-          <li>Agenda de consultas</li>
-          <li>Confirmação manual</li>
+          <li>Até 100 clientes</li>
+          <li>Agenda simples</li>
+          <li>Ordens de serviço e PDF</li>
         </ul>
-        <button class="btn btn-outline" style="width:100%;" onclick="selecionarPlano('Básico', this)">Selecionar</button>
+        <button class="btn btn-outline-dark btn-block">Assinar Básico</button>
       </div>
 
       <div class="plan-card featured">
         <span class="tag">Mais popular</span>
         <h3>Pro</h3>
-        <div class="price">R$ 149<span>/mês</span></div>
+        <div class="price">R$ 169<span>/mês</span></div>
         <ul>
-          <li>Pacientes ilimitados</li>
-          <li>Financeiro completo</li>
-          <li>Relatórios e avaliações</li>
-          <li>Confirmação automática</li>
+          <li>Clientes e veículos ilimitados</li>
+          <li>Agenda com calendário completo</li>
+          <li>Estoque com alerta automático</li>
+          <li>Relatórios completos</li>
         </ul>
-        <button class="btn btn-accent" style="width:100%;" onclick="selecionarPlano('Pro', this)">Selecionar</button>
+        <button class="btn btn-accent btn-block">Assinar Pro</button>
       </div>
 
       <div class="plan-card">
         <h3>Premium</h3>
-        <div class="price">R$ 259<span>/mês</span></div>
+        <div class="price">R$ 289<span>/mês</span></div>
         <ul>
           <li>Tudo do plano Pro</li>
-          <li>Múltiplas unidades</li>
+          <li>Múltiplos funcionários e comissões</li>
           <li>Backup automático</li>
           <li>Suporte prioritário</li>
         </ul>
-        <button class="btn btn-outline" style="width:100%;" onclick="selecionarPlano('Premium', this)">Selecionar</button>
+        <button class="btn btn-outline-dark btn-block">Assinar Premium</button>
       </div>
-    </section>
+    </div>
+  </section>
 
-  </main>
-</div>
+  <!-- ===================== FAQ ===================== -->
+  <section style="background:var(--surface-2);">
+    <div class="wrap">
+      <span class="eyebrow">Dúvidas</span>
+      <h2 class="section-title">Perguntas frequentes</h2>
 
-<div class="toast" id="toast"></div>
+      <div id="faqList">
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">Preciso instalar algum programa?<span class="x">+</span></button>
+          <div class="faq-a"><p>Não. O sistema roda direto no navegador do celular ou computador, sem instalação.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">Funciona sem internet?<span class="x">+</span></button>
+          <div class="faq-a"><p>É preciso estar conectado, já que os dados e alguns recursos (como PDF e fontes) são carregados pela internet.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">Consigo mudar de plano depois?<span class="x">+</span></button>
+          <div class="faq-a"><p>Sim, você pode subir ou descer de plano a qualquer momento conforme a oficina crescer.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">O sistema emite recibo e orçamento em PDF?<span class="x">+</span></button>
+          <div class="faq-a"><p>Sim, orçamento, ordem de serviço, recibo e nota de serviço são gerados em PDF direto pelo sistema.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CTA FINAL ===================== -->
+  <section>
+    <div class="cta-final">
+      <h2>Pronto pra organizar sua oficina?</h2>
+      <p>Comece agora e veja a diferença já na primeira semana.</p>
+      <a href="#planos" class="btn btn-accent btn-block">Escolher meu plano</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="brand">🔧 OficinaGestão</div>
+    <div class="links">
+      <a href="#recursos">Recursos</a>
+      <a href="#planos">Planos</a>
+      <a href="#faqList">Dúvidas</a>
+    </div>
+    <p>© 2026 OficinaGestão. Sistema de gestão para oficinas mecânicas.</p>
+  </footer>
 
 <script>
-/* ============================================================
-   ESTADO EM MEMÓRIA (MVP)
-   Próxima etapa do projeto: substituir por backend + banco de
-   dados real (ex: Node/Express + PostgreSQL) para persistência,
-   login multi-clínica e pagamentos.
-   ============================================================ */
-let pacientes = [
-  { id:1, nome:'Ana Beatriz Souza', telefone:'(11) 99887-1122', nascimento:'1994-03-12', obs:'Sem alergias conhecidas.' },
-  { id:2, nome:'Carlos Eduardo Lima', telefone:'(11) 98123-4455', nascimento:'1987-07-02', obs:'Convênio OdontoSaúde.' }
-];
-let consultas = [
-  { id:1, pacienteId:1, data: hojeISO(), hora:'09:00', procedimento:'Limpeza', status:'agendada', confirmacao:'pendente' },
-  { id:2, pacienteId:2, data: hojeISO(), hora:'14:30', procedimento:'Avaliação', status:'agendada', confirmacao:'confirmada' }
-];
-let avaliacoes = [
-  { id:1, paciente:'Ana Beatriz Souza', nota:5, comentario:'Atendimento excelente, super recomendo!' }
-];
-let financeiro = [
-  { id:1, tipo:'entrada', descricao:'Consulta - Ana Beatriz', valor:180 },
-  { id:2, tipo:'saida', descricao:'Material odontológico', valor:60 }
-];
-let planoAtual = null;
-let nextId = { paciente:3, consulta:3, avaliacao:2, financeiro:3 };
-
-function hojeISO(){
-  return new Date().toISOString().slice(0,10);
+function toggleFaq(btn){
+  const item = btn.closest('.faq-item');
+  const estavaAberto = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if(!estavaAberto) item.classList.add('open');
 }
-
-/* ============================================================
-   NAVEGAÇÃO
-   ============================================================ */
-const titulos = {
-  home: ['OdontoGestão','Sorriso Clínica Odontológica'],
-  pacientes: ['Pacientes','Cadastro e histórico'],
-  consultas: ['Consultas','Agenda da clínica'],
-  confirmacao: ['Confirmação','Consultas pendentes'],
-  avaliacoes: ['Avaliações','Feedback dos pacientes'],
-  financeiro: ['Financeiro','Entradas e saídas'],
-  relatorios: ['Relatórios','Visão geral'],
-  configuracoes: ['Configurações','Preferências da clínica'],
-  planos: ['Planos','Assinatura da clínica']
-};
-
-function showView(id){
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById('view-' + id).classList.add('active');
-  document.getElementById('backBtn').classList.toggle('show', id !== 'home');
-  document.getElementById('topTitle').textContent = titulos[id][0];
-  document.getElementById('topSub').textContent = titulos[id][1];
-  window.scrollTo(0,0);
-
-  if(id === 'pacientes') renderPacientes();
-  if(id === 'consultas') { popularSelectPacientes(); renderConsultas('todas'); }
-  if(id === 'confirmacao') renderConfirmacao('pendente');
-  if(id === 'avaliacoes') renderAvaliacoes();
-  if(id === 'financeiro') renderFinanceiro();
-  if(id === 'relatorios') renderRelatorios();
-  if(id === 'home') renderHome();
-}
-
-function goHome(){ showView('home'); }
-
-/* ============================================================
-   TOAST
-   ============================================================ */
-let toastTimer;
-function showToast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
-}
-
-/* ============================================================
-   HOME
-   ============================================================ */
-function renderHome(){
-  document.getElementById('statPacientes').textContent = pacientes.length;
-  document.getElementById('statConsultasHoje').textContent =
-    consultas.filter(c => c.data === hojeISO()).length;
-  document.getElementById('statPendentes').textContent =
-    consultas.filter(c => c.confirmacao === 'pendente').length;
-  const receita = financeiro.filter(f=>f.tipo==='entrada').reduce((s,f)=>s+f.valor,0);
-  document.getElementById('statReceita').textContent = formatMoeda(receita);
-}
-
-function formatMoeda(v){
-  return 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
-}
-
-function iniciais(nome){
-  return nome.split(' ').filter(Boolean).slice(0,2).map(p=>p[0]).join('').toUpperCase();
-}
-
-/* ============================================================
-   PACIENTES
-   ============================================================ */
-function addPaciente(e){
-  e.preventDefault();
-  const nome = document.getElementById('pNome').value.trim();
-  const telefone = document.getElementById('pTelefone').value.trim();
-  const nascimento = document.getElementById('pNascimento').value;
-  const obs = document.getElementById('pObs').value.trim();
-  pacientes.push({ id: nextId.paciente++, nome, telefone, nascimento, obs });
-  document.getElementById('formPaciente').reset();
-  renderPacientes();
-  showToast('Paciente cadastrado com sucesso');
-  return false;
-}
-
-function excluirPaciente(id){
-  pacientes = pacientes.filter(p => p.id !== id);
-  renderPacientes();
-  showToast('Paciente removido');
-}
-
-function renderPacientes(){
-  const termo = (document.getElementById('buscaPaciente')?.value || '').toLowerCase();
-  const lista = document.getElementById('listaPacientes');
-  const filtrados = pacientes.filter(p => p.nome.toLowerCase().includes(termo));
-
-  if(filtrados.length === 0){
-    lista.innerHTML = `<div class="empty-state"><div class="e-icon">👤</div><p>Nenhum paciente encontrado.</p></div>`;
-    return;
-  }
-
-  lista.innerHTML = filtrados.map(p => `
-    <div class="list-item">
-      <div class="avatar">${iniciais(p.nome)}</div>
-      <div class="li-body">
-        <div class="li-title">${p.nome}</div>
-        <div class="li-sub">${p.telefone || 'Sem telefone'}${p.obs ? ' · ' + p.obs : ''}</div>
-      </div>
-      <div class="li-actions">
-        <button class="btn btn-danger btn-sm" onclick="excluirPaciente(${p.id})">Excluir</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-/* ============================================================
-   CONSULTAS
-   ============================================================ */
-function popularSelectPacientes(){
-  const sel = document.getElementById('cPaciente');
-  sel.innerHTML = pacientes.map(p => `<option value="${p.id}">${p.nome}</option>`).join('')
-    || '<option value="">Cadastre um paciente primeiro</option>';
-}
-
-function addConsulta(e){
-  e.preventDefault();
-  const pacienteId = Number(document.getElementById('cPaciente').value);
-  const data = document.getElementById('cData').value;
-  const hora = document.getElementById('cHora').value;
-  const procedimento = document.getElementById('cProcedimento').value.trim();
-  if(!pacienteId){ showToast('Cadastre um paciente antes de agendar'); return false; }
-  consultas.push({ id: nextId.consulta++, pacienteId, data, hora, procedimento, status:'agendada', confirmacao:'pendente' });
-  document.getElementById('formConsulta').reset();
-  renderConsultas('todas');
-  showToast('Consulta agendada');
-  return false;
-}
-
-function nomePaciente(id){
-  const p = pacientes.find(p => p.id === id);
-  return p ? p.nome : 'Paciente removido';
-}
-
-function marcarRealizada(id){
-  const c = consultas.find(c => c.id === id);
-  if(c) c.status = 'realizada';
-  renderConsultas(document.querySelector('#view-consultas .tab.active').dataset.ftr);
-  showToast('Consulta marcada como realizada');
-}
-
-function filtrarConsultas(filtro, btn){
-  document.querySelectorAll('#view-consultas .tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  renderConsultas(filtro);
-}
-
-function renderConsultas(filtro){
-  let lista = consultas;
-  if(filtro === 'agendadas') lista = consultas.filter(c => c.status === 'agendada');
-  if(filtro === 'realizadas') lista = consultas.filter(c => c.status === 'realizada');
-
-  const el = document.getElementById('listaConsultas');
-  if(lista.length === 0){
-    el.innerHTML = `<div class="empty-state"><div class="e-icon">📅</div><p>Nenhuma consulta por aqui ainda.</p></div>`;
-    return;
-  }
-
-  el.innerHTML = [...lista].sort((a,b)=> (a.data+a.hora).localeCompare(b.data+b.hora)).map(c => `
-    <div class="list-item">
-      <div class="avatar">${iniciais(nomePaciente(c.pacienteId))}</div>
-      <div class="li-body">
-        <div class="li-title">${nomePaciente(c.pacienteId)}</div>
-        <div class="li-sub">${formatarData(c.data)} às ${c.hora} · ${c.procedimento}</div>
-      </div>
-      <div class="li-actions">
-        ${c.status === 'agendada'
-          ? `<span class="badge badge-warning">Agendada</span><button class="btn btn-outline btn-sm" onclick="marcarRealizada(${c.id})">Concluir</button>`
-          : `<span class="badge badge-success">Realizada</span>`}
-      </div>
-    </div>
-  `).join('');
-}
-
-function formatarData(iso){
-  if(!iso) return '';
-  const [ano,mes,dia] = iso.split('-');
-  return `${dia}/${mes}/${ano}`;
-}
-
-/* ============================================================
-   CONFIRMAÇÃO
-   ============================================================ */
-function filtrarConfirmacao(filtro, btn){
-  document.querySelectorAll('#view-confirmacao .tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  renderConfirmacao(filtro);
-}
-
-function definirConfirmacao(id, status){
-  const c = consultas.find(c => c.id === id);
-  if(c) c.confirmacao = status;
-  renderConfirmacao(document.querySelector('#view-confirmacao .tab.active').dataset.ftc);
-  showToast(status === 'confirmada' ? 'Consulta confirmada' : 'Consulta cancelada');
-}
-
-function renderConfirmacao(filtro){
-  const lista = consultas.filter(c => c.confirmacao === filtro);
-  const el = document.getElementById('listaConfirmacao');
-
-  if(lista.length === 0){
-    el.innerHTML = `<div class="empty-state"><div class="e-icon">✅</div><p>Nada por aqui no momento.</p></div>`;
-    return;
-  }
-
-  el.innerHTML = lista.map(c => `
-    <div class="list-item">
-      <div class="avatar">${iniciais(nomePaciente(c.pacienteId))}</div>
-      <div class="li-body">
-        <div class="li-title">${nomePaciente(c.pacienteId)}</div>
-        <div class="li-sub">${formatarData(c.data)} às ${c.hora} · ${c.procedimento}</div>
-      </div>
-      <div class="li-actions">
-        ${filtro === 'pendente' ? `
-          <button class="btn btn-primary btn-sm" style="margin:0;" onclick="definirConfirmacao(${c.id},'confirmada')">Confirmar</button>
-          <button class="btn btn-danger btn-sm" onclick="definirConfirmacao(${c.id},'cancelada')">Cancelar</button>
-        ` : filtro === 'confirmada'
-          ? `<span class="badge badge-success">Confirmada</span>`
-          : `<span class="badge badge-danger">Cancelada</span>`}
-      </div>
-    </div>
-  `).join('');
-}
-
-/* ============================================================
-   AVALIAÇÕES
-   ============================================================ */
-function addAvaliacao(e){
-  e.preventDefault();
-  const paciente = document.getElementById('avPaciente').value.trim();
-  const nota = Number(document.getElementById('avNota').value);
-  const comentario = document.getElementById('avComentario').value.trim();
-  avaliacoes.push({ id: nextId.avaliacao++, paciente, nota, comentario });
-  document.getElementById('formAvaliacao').reset();
-  renderAvaliacoes();
-  showToast('Avaliação registrada');
-  return false;
-}
-
-function renderAvaliacoes(){
-  const media = avaliacoes.length
-    ? (avaliacoes.reduce((s,a)=>s+a.nota,0) / avaliacoes.length)
-    : 0;
-  document.getElementById('mediaAvaliacao').textContent = media.toFixed(1) + ' ⭐';
-  document.getElementById('totalAvaliacoes').textContent = avaliacoes.length;
-
-  const el = document.getElementById('listaAvaliacoes');
-  if(avaliacoes.length === 0){
-    el.innerHTML = `<div class="empty-state"><div class="e-icon">⭐</div><p>Ainda não há avaliações.</p></div>`;
-    return;
-  }
-
-  el.innerHTML = [...avaliacoes].reverse().map(a => `
-    <div class="list-item">
-      <div class="avatar">${iniciais(a.paciente)}</div>
-      <div class="li-body">
-        <div class="li-title">${a.paciente} · ${'⭐'.repeat(a.nota)}</div>
-        <div class="li-sub">${a.comentario || 'Sem comentário.'}</div>
-      </div>
-    </div>
-  `).join('');
-}
-
-/* ============================================================
-   FINANCEIRO
-   ============================================================ */
-function addFinanceiro(e){
-  e.preventDefault();
-  const tipo = document.getElementById('fTipo').value;
-  const descricao = document.getElementById('fDescricao').value.trim();
-  const valor = Number(document.getElementById('fValor').value);
-  financeiro.push({ id: nextId.financeiro++, tipo, descricao, valor });
-  document.getElementById('formFinanceiro').reset();
-  renderFinanceiro();
-  showToast('Lançamento adicionado');
-  return false;
-}
-
-function excluirFinanceiro(id){
-  financeiro = financeiro.filter(f => f.id !== id);
-  renderFinanceiro();
-}
-
-function renderFinanceiro(){
-  const entradas = financeiro.filter(f=>f.tipo==='entrada').reduce((s,f)=>s+f.valor,0);
-  const saidas = financeiro.filter(f=>f.tipo==='saida').reduce((s,f)=>s+f.valor,0);
-  document.getElementById('finEntradas').textContent = formatMoeda(entradas);
-  document.getElementById('finSaidas').textContent = formatMoeda(saidas);
-  const lucroEl = document.getElementById('finLucro');
-  lucroEl.textContent = formatMoeda(entradas - saidas);
-  lucroEl.className = 'v ' + (entradas - saidas >= 0 ? 'pos' : 'neg');
-
-  const el = document.getElementById('listaFinanceiro');
-  if(financeiro.length === 0){
-    el.innerHTML = `<div class="empty-state"><div class="e-icon">💰</div><p>Nenhum lançamento ainda.</p></div>`;
-    return;
-  }
-
-  el.innerHTML = [...financeiro].reverse().map(f => `
-    <div class="list-item">
-      <div class="avatar" style="background:${f.tipo==='entrada' ? 'rgba(46,155,111,0.14)' : 'rgba(217,83,79,0.12)'}; color:${f.tipo==='entrada' ? 'var(--success)' : 'var(--danger)'};">
-        ${f.tipo==='entrada' ? '↑' : '↓'}
-      </div>
-      <div class="li-body">
-        <div class="li-title">${f.descricao}</div>
-        <div class="li-sub">${f.tipo === 'entrada' ? 'Entrada' : 'Saída'}</div>
-      </div>
-      <div class="li-actions">
-        <span class="mono" style="font-weight:600; color:${f.tipo==='entrada' ? 'var(--success)' : 'var(--danger)'};">
-          ${f.tipo==='entrada' ? '+' : '-'} ${formatMoeda(f.valor)}
-        </span>
-      </div>
-    </div>
-  `).join('');
-}
-
-/* ============================================================
-   RELATÓRIOS
-   ============================================================ */
-function renderRelatorios(){
-  document.getElementById('repPacientes').textContent = pacientes.length;
-  document.getElementById('repConsultas').textContent = consultas.length;
-  const receita = financeiro.filter(f=>f.tipo==='entrada').reduce((s,f)=>s+f.valor,0);
-  document.getElementById('repReceita').textContent = formatMoeda(receita);
-  const media = avaliacoes.length
-    ? (avaliacoes.reduce((s,a)=>s+a.nota,0) / avaliacoes.length)
-    : 0;
-  document.getElementById('repAvaliacao').textContent = media.toFixed(1);
-
-  // gráfico simples: consultas dos últimos 7 dias
-  const dias = [];
-  for(let i=6; i>=0; i--){
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    dias.push(d.toISOString().slice(0,10));
-  }
-  const contagens = dias.map(d => consultas.filter(c => c.data === d).length);
-  const max = Math.max(...contagens, 1);
-
-  const chart = document.getElementById('chartConsultas');
-  chart.innerHTML = dias.map((d,i) => {
-    const altura = Math.max(6, (contagens[i]/max) * 100);
-    const rotulo = d.slice(8,10) + '/' + d.slice(5,7);
-    return `<div class="bar-col">
-      <div class="bar" style="height:${altura}%;" title="${contagens[i]} consulta(s)"></div>
-      <div class="bar-label">${rotulo}</div>
-    </div>`;
-  }).join('');
-}
-
-/* ============================================================
-   CONFIGURAÇÕES
-   ============================================================ */
-function mostrarConfig(nome, btn){
-  document.querySelectorAll('#view-configuracoes .tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('.cfg-panel').forEach(p => p.style.display = 'none');
-  document.getElementById('cfg-' + nome).style.display = 'block';
-}
-
-function salvarPerfilClinica(){
-  const nome = document.getElementById('cfgNome').value.trim() || 'Sorriso Clínica Odontológica';
-  document.getElementById('topSub').textContent = nome;
-  titulos.home[1] = nome;
-  showToast('Perfil da clínica atualizado');
-}
-
-function exportarBackup(){
-  const dados = { pacientes, consultas, avaliacoes, financeiro };
-  const blob = new Blob([JSON.stringify(dados, null, 2)], { type:'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'backup-clinica.json';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-  showToast('Backup exportado');
-}
-
-/* ============================================================
-   PLANOS
-   ============================================================ */
-function selecionarPlano(nome, btn){
-  planoAtual = nome;
-  document.querySelectorAll('.plan-card button').forEach(b => {
-    b.textContent = 'Selecionar';
-    b.className = b.closest('.plan-card').classList.contains('featured') ? 'btn btn-accent' : 'btn btn-outline';
-    b.style.width = '100%';
-  });
-  btn.textContent = 'Plano atual ✓';
-  btn.className = 'btn btn-primary';
-  btn.style.width = '100%';
-  showToast('Plano ' + nome + ' selecionado');
-}
-
-/* ============================================================
-   INICIALIZAÇÃO
-   ============================================================ */
-document.getElementById('cData') && (document.getElementById('cData').min = hojeISO());
-renderHome();
 </script>
 </body>
 </html>
