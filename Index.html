@@ -2,443 +2,1071 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OficinaGestão — O sistema completo para sua oficina mecânica</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+<title>EstéticaPro</title>
 <style>
-  :root{
-    --bg:#F1F2F0; --surface:#FFFFFF; --surface-2:#EDEEEA; --border:#DCDED8;
-    --primary:#20242B; --primary-bright:#3A4150; --accent:#F2A310; --accent-2:#D68C05;
-    --text:#15181D; --muted:#6B7280; --success:#16A34A; --danger:#DC2626;
-    --radius:18px; --radius-sm:12px;
-    --shadow:0 4px 18px rgba(20,24,29,0.08); --shadow-lg:0 16px 40px rgba(20,24,29,0.22);
-  }
-  *{ box-sizing:border-box; margin:0; padding:0; }
-  html{ scroll-behavior:smooth; }
-  body{ background:var(--bg); color:var(--text); font-family:'Inter',-apple-system,sans-serif; line-height:1.5; }
-  h1,h2,h3,.brand{ font-family:'Oswald',sans-serif; letter-spacing:-0.01em; }
-  .mono{ font-family:'JetBrains Mono',monospace; }
-  a{ color:inherit; text-decoration:none; }
-  img,svg{ display:block; max-width:100%; }
-  .wrap{ max-width:520px; margin:0 auto; padding:0 20px; }
-  section{ padding:52px 0; }
-  .eyebrow{ display:inline-flex; align-items:center; gap:6px; background:var(--surface-2); color:var(--primary); font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; padding:6px 12px; border-radius:20px; margin-bottom:14px; }
-  .section-title{ font-size:26px; font-weight:600; line-height:1.15; margin-bottom:10px; }
-  .section-desc{ color:var(--muted); font-size:14.5px; margin-bottom:28px; }
-
-  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:14px 22px; border-radius:14px; border:none; font-weight:700; font-size:15px; cursor:pointer; }
-  .btn-accent{ background:var(--accent); color:#20242B; }
-  .btn-primary{ background:var(--primary); color:#fff; }
-  .btn-outline{ background:transparent; color:#fff; border:1.5px solid rgba(255,255,255,0.5); }
-  .btn-outline-dark{ background:transparent; color:var(--primary); border:1.5px solid var(--border); }
-  .btn-block{ width:100%; }
-
-  /* ---------- Nav ---------- */
-  header.nav{ position:sticky; top:0; z-index:50; background:rgba(241,242,240,0.9); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); }
-  .nav-row{ display:flex; align-items:center; justify-content:space-between; padding:14px 20px; max-width:520px; margin:0 auto; }
-  .nav-brand{ display:flex; align-items:center; gap:8px; font-weight:700; font-size:16px; }
-  .nav-brand .ic{ font-size:20px; }
-  .nav-cta{ background:var(--primary); color:#fff; padding:9px 16px; border-radius:10px; font-size:13px; font-weight:700; }
-
-  /* ---------- Hero ---------- */
-  .hero{ background:radial-gradient(circle at 20% 0%, #2B3038, var(--primary) 60%); color:#fff; padding:44px 0 60px; position:relative; overflow:hidden; }
-  .hero-badge{ display:inline-flex; align-items:center; gap:6px; background:rgba(242,163,16,0.16); color:var(--accent); font-size:11.5px; font-weight:700; padding:6px 12px; border-radius:20px; margin-bottom:16px; }
-  .hero h1{ font-size:32px; font-weight:700; line-height:1.12; margin-bottom:14px; }
-  .hero h1 span{ color:var(--accent); }
-  .hero p{ font-size:15px; color:rgba(255,255,255,0.78); margin-bottom:26px; }
-  .hero-ctas{ display:flex; flex-direction:column; gap:10px; }
-  .hero-note{ font-size:12px; color:rgba(255,255,255,0.55); margin-top:12px; text-align:center; }
-
-  .mock{ margin-top:38px; background:var(--surface); border-radius:20px; padding:16px; box-shadow:var(--shadow-lg); }
-  .mock-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
-  .mock-top .t{ font-family:'Oswald',sans-serif; font-weight:600; color:var(--primary); font-size:14px; }
-  .mock-top .d{ width:8px; height:8px; border-radius:50%; background:var(--success); }
-  .mock-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
-  .mock-card{ background:var(--surface-2); border-radius:10px; padding:10px; }
-  .mock-card .n{ font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--primary); font-size:16px; }
-  .mock-card .l{ font-size:10px; color:var(--muted); margin-top:2px; }
-
-  /* ---------- Benefícios rápidos ---------- */
-  .benefits{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
-  .benefit{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px 14px; text-align:center; }
-  .benefit .ic{ font-size:24px; margin-bottom:8px; }
-  .benefit .t{ font-weight:700; font-size:13px; }
-  .benefit .d{ font-size:11.5px; color:var(--muted); margin-top:3px; line-height:1.4; }
-
-  /* ---------- Features ---------- */
-  .feat-card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; margin-bottom:14px; box-shadow:var(--shadow); }
-  .feat-head{ display:flex; align-items:center; gap:12px; margin-bottom:12px; }
-  .feat-icon{ width:44px; height:44px; border-radius:13px; background:var(--surface-2); color:var(--accent-2); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
-  .feat-head h3{ font-size:16.5px; font-weight:600; }
-  .feat-card ul{ list-style:none; }
-  .feat-card li{ font-size:13.5px; color:var(--muted); padding:5px 0 5px 20px; position:relative; }
-  .feat-card li::before{ content:"—"; position:absolute; left:0; color:var(--accent-2); font-weight:700; }
-  .feat-status{ display:inline-block; margin-top:10px; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; padding:4px 10px; border-radius:20px; }
-  .status-live{ background:rgba(22,163,74,0.12); color:var(--success); }
-  .status-soon{ background:rgba(242,163,16,0.16); color:var(--accent-2); }
-
-  .status-list{ display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
-  .status-chip{ font-size:11px; font-weight:700; padding:5px 10px; border-radius:20px; }
-
-  /* ---------- Status OS visual ---------- */
-  .os-flow{ display:flex; gap:8px; overflow-x:auto; padding:4px 2px 12px; margin-top:14px; }
-  .os-step{ flex-shrink:0; background:var(--surface-2); border-radius:10px; padding:8px 12px; font-size:11.5px; font-weight:700; color:var(--primary); white-space:nowrap; }
-  .os-step.done{ background:var(--primary); color:#fff; }
-
-  /* ---------- Tecnologia ---------- */
-  .tech-card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px; margin-bottom:10px; display:flex; gap:12px; align-items:flex-start; }
-  .tech-card .ic{ font-size:22px; flex-shrink:0; }
-  .tech-card .t{ font-weight:700; font-size:14px; }
-  .tech-card .d{ font-size:12.5px; color:var(--muted); margin-top:2px; line-height:1.5; }
-
-  /* ---------- Planos ---------- */
-  .plan-card{ border-radius:var(--radius); padding:22px; margin-bottom:14px; border:1px solid var(--border); background:var(--surface); position:relative; }
-  .plan-card.featured{ border:2px solid var(--accent); box-shadow:var(--shadow-lg); }
-  .plan-card .tag{ position:absolute; top:-11px; right:18px; background:var(--accent); color:#20242B; font-size:10.5px; font-weight:700; padding:5px 12px; border-radius:20px; }
-  .plan-card h3{ font-size:17px; }
-  .plan-card .price{ font-family:'Oswald',sans-serif; font-size:30px; font-weight:700; color:var(--primary); margin:8px 0; }
-  .plan-card .price span{ font-size:12.5px; color:var(--muted); font-family:'Inter'; font-weight:500; }
-  .plan-card ul{ list-style:none; margin:14px 0; }
-  .plan-card li{ font-size:13.5px; padding:5px 0; }
-  .plan-card li::before{ content:"✓ "; color:var(--success); font-weight:700; }
-
-  /* ---------- FAQ ---------- */
-  .faq-item{ border-bottom:1px solid var(--border); }
-  .faq-q{ width:100%; text-align:left; background:none; border:none; padding:16px 0; display:flex; justify-content:space-between; align-items:center; font-weight:600; font-size:14px; cursor:pointer; }
-  .faq-q .x{ color:var(--accent-2); font-size:18px; transition:transform .2s ease; flex-shrink:0; margin-left:10px; }
-  .faq-item.open .faq-q .x{ transform:rotate(45deg); }
-  .faq-a{ max-height:0; overflow:hidden; transition:max-height .25s ease; }
-  .faq-item.open .faq-a{ max-height:200px; }
-  .faq-a p{ font-size:13px; color:var(--muted); padding-bottom:16px; line-height:1.6; }
-
-  /* ---------- CTA final ---------- */
-  .cta-final{ background:linear-gradient(135deg, var(--primary), #0E1116); color:#fff; border-radius:24px; padding:32px 24px; text-align:center; margin:0 20px; }
-  .cta-final h2{ font-size:22px; margin-bottom:8px; }
-  .cta-final p{ font-size:13.5px; color:rgba(255,255,255,0.75); margin-bottom:20px; }
-
-  footer{ padding:36px 20px 40px; text-align:center; }
-  footer .brand{ font-size:15px; font-weight:700; margin-bottom:6px; }
-  footer p{ font-size:12px; color:var(--muted); }
-  footer .links{ display:flex; justify-content:center; gap:16px; margin:14px 0; font-size:12.5px; color:var(--muted); flex-wrap:wrap; }
+body{font-family:Arial;background:#f8f5f7;padding:20px}
+.card{background:#fff;padding:15px;border-radius:10px;max-width:400px;margin:auto}
+input,button{width:100%;padding:10px;margin-top:10px}
+button{background:#d63384;color:#fff;border:none}
+li{margin:8px 0}
 </style>
 </head>
 <body>
 
-  <header class="nav">
-    <div class="nav-row">
-      <div class="nav-brand"><span class="ic">🔧</span> OficinaGestão</div>
-      <a href="#planos" class="nav-cta">Ver planos</a>
+<div class="card">
+<h2>💆 EstéticaPro</h2>
+<p>Clínica de Estética e Beleza</p>
+
+<input id="cliente" placeholder="Nome da cliente">
+<button onclick="cadastrar()">Cadastrar Cliente</button>
+
+<h3>Clientes</h3>
+<ul id="lista"></ul>
+</div>
+
+<script>
+let clientes=[];
+
+function cadastrar(){
+ let nome=document.getElementById("cliente").value.trim();
+ if(nome=="") return alert("Digite o nome.");
+ clientes.push(nome);
+ atualizar();
+ document.getElementById("cliente").value="";
+}
+
+function atualizar(){
+ let lista=document.getElementById("lista");
+ lista.innerHTML="";
+ clientes.forEach(c=>{
+  lista.innerHTML+=`<li>💖 ${c}</li>`;
+ });
+}
+</script>
+
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>BellaGestão — SaaS para Clínicas Estéticas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #FBF5F3;
+    --surface: #FFFFFF;
+    --surface-2: #F6E9E7;
+    --border: #EAD9D6;
+    --primary: #7A4459;
+    --primary-bright: #A2597A;
+    --accent: #C9A66B;
+    --accent-2: #B58D4F;
+    --text: #2B1620;
+    --muted: #8C6B75;
+    --success: #3F8F6D;
+    --danger: #B23A5C;
+    --warning: #B5854F;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 4px 18px rgba(122,68,89,0.10);
+    --shadow-lg: 0 12px 32px rgba(122,68,89,0.18);
+  }
+  *{ box-sizing:border-box; }
+  html,body{
+    margin:0; padding:0; background:var(--bg); color:var(--text);
+    font-family:'Inter',-apple-system,sans-serif; -webkit-tap-highlight-color:transparent;
+  }
+  h1,h2,h3,.brand{ font-family:'Playfair Display', Georgia, serif; letter-spacing:-0.01em; }
+  .mono{ font-family:'JetBrains Mono',monospace; }
+  button{ font-family:inherit; cursor:pointer; }
+
+  #app{ max-width:520px; margin:0 auto; min-height:100vh; background:var(--bg); display:flex; flex-direction:column; }
+
+  header.topbar{
+    position:sticky; top:0; z-index:20; background:var(--primary); color:#fff;
+    padding:18px 18px 22px; border-radius:0 0 22px 22px; box-shadow:var(--shadow-lg);
+  }
+  .topbar-row{ display:flex; align-items:center; gap:12px; }
+  .back-btn{
+    display:none; align-items:center; justify-content:center; width:38px; height:38px;
+    border-radius:12px; background:rgba(255,255,255,0.15); border:none; color:#fff; font-size:18px; flex-shrink:0;
+  }
+  .back-btn.show{ display:flex; }
+  .topbar-title{ flex:1; min-width:0; }
+  .topbar-title .brand{ font-size:21px; font-weight:600; margin:0; line-height:1.2; }
+  .topbar-title .sub{ font-size:12.5px; color:rgba(255,255,255,0.75); margin-top:2px; }
+  .petal-line{ margin-top:14px; height:22px; width:100%; opacity:0.9; }
+  .petal-line path{
+    fill:none; stroke:var(--accent); stroke-width:2; stroke-linecap:round; stroke-linejoin:round;
+    stroke-dasharray:340; stroke-dashoffset:340; animation:draw 2.8s ease-in-out infinite;
+  }
+  @keyframes draw{ 0%{stroke-dashoffset:340;} 45%{stroke-dashoffset:0;} 70%{stroke-dashoffset:0;} 100%{stroke-dashoffset:-340;} }
+  @media (prefers-reduced-motion:reduce){ .petal-line path{ animation:none; stroke-dashoffset:0; } }
+
+  main{ flex:1; padding:18px 18px 100px; }
+  .view{ display:none; animation:fadein .25s ease; }
+  .view.active{ display:block; }
+  @keyframes fadein{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .view-heading{ font-size:22px; font-weight:600; margin:4px 0 4px; }
+  .view-desc{ color:var(--muted); font-size:13.5px; margin:0 0 18px; }
+
+  .stats-row{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin:16px 0 20px; }
+  .stat-card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 14px; }
+  .stat-card .num{ font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:600; color:var(--primary); }
+  .stat-card .label{ font-size:11.5px; color:var(--muted); margin-top:2px; }
+
+  .module-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+  .module-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px 14px;
+    text-align:left; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow);
+    transition:transform .15s ease;
+  }
+  .module-card:active{ transform:scale(0.97); }
+  .module-icon{
+    width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center;
+    font-size:18px; background:var(--surface-2); color:var(--accent-2);
+  }
+  .module-card .m-title{ font-weight:600; font-size:14.5px; }
+  .module-card .m-desc{ font-size:11.5px; color:var(--muted); line-height:1.4; }
+
+  .card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:16px; box-shadow:var(--shadow); }
+  .card h3{ margin:0 0 12px; font-size:15.5px; }
+  label{ display:block; font-size:12.5px; color:var(--muted); margin:10px 0 4px; }
+  input, select, textarea{
+    width:100%; padding:10px 12px; border-radius:var(--radius-sm); border:1px solid var(--border);
+    background:var(--surface); color:var(--text); font-size:14px; font-family:inherit;
+  }
+  input:focus, select:focus, textarea:focus{ outline:2px solid var(--primary-bright); outline-offset:1px; }
+  textarea{ resize:vertical; min-height:70px; }
+
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:11px 16px; border-radius:12px; border:none; font-weight:600; font-size:14px; }
+  .btn-primary{ background:var(--primary); color:#fff; width:100%; margin-top:14px; }
+  .btn-primary:active{ background:var(--primary-bright); }
+  .btn-accent{ background:var(--accent); color:#fff; }
+  .btn-outline{ background:transparent; color:var(--primary); border:1px solid var(--border); }
+  .btn-danger{ background:rgba(178,58,92,0.1); color:var(--danger); }
+  .btn-sm{ padding:7px 11px; font-size:12.5px; border-radius:9px; }
+
+  .search-box{ position:relative; margin-bottom:14px; }
+  .search-box input{ padding-left:34px; }
+  .search-box .icon{ position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--muted); }
+
+  .list-item{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:10px; display:flex; align-items:center; gap:12px; }
+  .avatar{ width:38px; height:38px; border-radius:50%; flex-shrink:0; background:var(--surface-2); color:var(--primary); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13.5px; }
+  .li-body{ flex:1; min-width:0; }
+  .li-title{ font-weight:600; font-size:14px; }
+  .li-sub{ font-size:12px; color:var(--muted); margin-top:1px; }
+  .li-actions{ display:flex; gap:6px; flex-shrink:0; }
+
+  .badge{ font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:20px; text-transform:uppercase; letter-spacing:.03em; }
+  .badge-success{ background:rgba(63,143,109,0.12); color:var(--success); }
+  .badge-warning{ background:rgba(181,133,79,0.16); color:var(--warning); }
+  .badge-danger{ background:rgba(178,58,92,0.12); color:var(--danger); }
+  .badge-muted{ background:var(--surface-2); color:var(--muted); }
+
+  .empty-state{ text-align:center; padding:34px 10px; color:var(--muted); }
+  .empty-state .e-icon{ font-size:30px; margin-bottom:8px; }
+  .empty-state p{ font-size:13px; margin:0; }
+
+  .tabs{ display:flex; gap:6px; margin-bottom:16px; overflow-x:auto; }
+  .tab{ padding:8px 13px; border-radius:20px; font-size:12.5px; font-weight:600; background:var(--surface); border:1px solid var(--border); color:var(--muted); white-space:nowrap; }
+  .tab.active{ background:var(--primary); color:#fff; border-color:var(--primary); }
+
+  .summary-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px; }
+  .summary-cell{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px; text-align:center; }
+  .summary-cell .v{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:14.5px; }
+  .summary-cell .l{ font-size:10.5px; color:var(--muted); margin-top:2px; }
+  .v.pos{ color:var(--success); } .v.neg{ color:var(--danger); }
+
+  .proc-item{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px; margin-bottom:10px; }
+  .proc-head{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
+  .proc-name{ font-weight:700; font-size:15px; }
+  .proc-price{ font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--primary); font-size:14px; white-space:nowrap; }
+  .proc-meta{ font-size:12px; color:var(--muted); margin-top:4px; }
+  .proc-desc{ font-size:12.5px; color:var(--muted); margin-top:6px; line-height:1.5; }
+  .proc-actions{ display:flex; gap:6px; margin-top:10px; }
+
+  .plan-card{ border-radius:var(--radius); padding:18px; margin-bottom:14px; border:1px solid var(--border); background:var(--surface); position:relative; }
+  .plan-card.featured{ border:2px solid var(--accent); box-shadow:var(--shadow-lg); }
+  .plan-card .tag{ position:absolute; top:-10px; right:16px; background:var(--accent); color:#fff; font-size:10.5px; font-weight:700; padding:4px 10px; border-radius:20px; }
+  .plan-card .price{ font-family:'Playfair Display',serif; font-size:26px; font-weight:600; color:var(--primary); margin:6px 0; }
+  .plan-card .price span{ font-size:12px; color:var(--muted); font-family:'Inter'; font-weight:500; }
+  .plan-card ul{ list-style:none; padding:0; margin:12px 0; }
+  .plan-card li{ font-size:13px; padding:4px 0; color:var(--text); }
+  .plan-card li::before{ content:"✓ "; color:var(--success); font-weight:700; }
+
+  .chart-bars{ display:flex; align-items:flex-end; gap:8px; height:120px; margin:10px 0 6px; }
+  .bar-col{ flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .bar{ width:100%; border-radius:6px 6px 0 0; background:linear-gradient(180deg, var(--primary-bright), var(--primary)); }
+  .bar-label{ font-size:10px; color:var(--muted); }
+
+  .toast{
+    position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(20px); background:var(--text); color:#fff;
+    padding:11px 18px; border-radius:12px; font-size:13px; opacity:0; pointer-events:none; transition:all .25s ease;
+    max-width:90%; text-align:center; z-index:50;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  ::-webkit-scrollbar{ width:0; height:0; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header class="topbar">
+    <div class="topbar-row">
+      <button class="back-btn" id="backBtn" onclick="goHome()" aria-label="Voltar">←</button>
+      <div class="topbar-title">
+        <p class="brand" id="topTitle">BellaGestão</p>
+        <div class="sub" id="topSub">Espaço Bella Estética</div>
+      </div>
     </div>
+    <svg class="petal-line" viewBox="0 0 340 22" preserveAspectRatio="none">
+      <path d="M0 11 L60 11 L74 2 L88 20 L100 11 L340 11" />
+    </svg>
   </header>
 
-  <!-- ===================== HERO ===================== -->
-  <section class="hero">
-    <div class="wrap">
-      <span class="hero-badge">🔧 Feito para oficinas mecânicas</span>
-      <h1>Sua oficina <span>organizada</span>, do orçamento à entrega.</h1>
-      <p>Clientes, veículos, ordens de serviço, agenda, estoque e financeiro — tudo em um só lugar, do celular ou do computador.</p>
-      <div class="hero-ctas">
-        <a href="#planos" class="btn btn-accent btn-block">Começar agora</a>
-        <a href="#recursos" class="btn btn-outline btn-block">Ver como funciona</a>
-      </div>
-      <p class="hero-note">Sem necessidade de instalar nada — funciona direto no navegador.</p>
+  <main>
 
-      <div class="mock">
-        <div class="mock-top"><span class="t">Painel da oficina</span><span class="d"></span></div>
-        <div class="mock-grid">
-          <div class="mock-card"><div class="n">18</div><div class="l">Veículos na oficina</div></div>
-          <div class="mock-card"><div class="n">7</div><div class="l">OS em aberto</div></div>
-          <div class="mock-card"><div class="n">5</div><div class="l">Agendados hoje</div></div>
-          <div class="mock-card"><div class="n">R$ 12,4k</div><div class="l">Faturamento do mês</div></div>
-        </div>
-      </div>
-    </div>
-  </section>
+    <!-- ===================== HOME ===================== -->
+    <section class="view active" id="view-home">
+      <h1 class="view-heading">Olá, seja bem-vinda ✨</h1>
+      <p class="view-desc">Aqui está o resumo de hoje da sua clínica.</p>
 
-  <!-- ===================== BENEFÍCIOS ===================== -->
-  <section>
-    <div class="wrap">
-      <div class="benefits">
-        <div class="benefit"><div class="ic">📋</div><div class="t">Menos papel</div><div class="d">Fim das fichas soltas e cadernos de anotação</div></div>
-        <div class="benefit"><div class="ic">⏱️</div><div class="t">Mais agilidade</div><div class="d">Orçamento e OS em PDF na hora</div></div>
-        <div class="benefit"><div class="ic">📈</div><div class="t">Mais controle</div><div class="d">Você sabe exatamente quanto entra e sai</div></div>
-        <div class="benefit"><div class="ic">🔔</div><div class="t">Menos esquecimento</div><div class="d">Agenda e lembretes de revisão</div></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== RECURSOS ===================== -->
-  <section id="recursos">
-    <div class="wrap">
-      <span class="eyebrow">Tudo que sua oficina precisa</span>
-      <h2 class="section-title">Um sistema, todos os módulos</h2>
-      <p class="section-desc">Cada parte da rotina da oficina organizada em um só painel, com tudo se conectando automaticamente.</p>
-
-      <div class="feat-card">
-        <div class="feat-head"><div class="feat-icon">🚗</div><h3>Dashboard</h3></div>
-        <ul>
-          <li>Veículos na oficina em tempo real</li>
-          <li>Ordens de serviço abertas</li>
-          <li>Faturamento do mês</li>
-          <li>Serviços agendados para hoje</li>
-          <li>Avisos importantes</li>
-        </ul>
-        <span class="feat-status status-live">Disponível</span>
+      <div class="stats-row">
+        <div class="stat-card"><div class="num" id="statClientes">0</div><div class="label">Clientes ativas</div></div>
+        <div class="stat-card"><div class="num" id="statAgendaHoje">0</div><div class="label">Atendimentos hoje</div></div>
+        <div class="stat-card"><div class="num" id="statPendentes">0</div><div class="label">Confirmações pendentes</div></div>
+        <div class="stat-card"><div class="num" id="statReceita">R$ 0</div><div class="label">Receita do mês</div></div>
       </div>
 
-      <div class="feat-card">
-        <div class="feat-head"><div class="feat-icon">👥</div><h3>Clientes</h3></div>
-        <ul>
-          <li>Cadastro completo</li>
-          <li>Histórico de serviços por cliente</li>
-          <li>Telefones e endereço</li>
-        </ul>
-        <span class="feat-status status-live">Disponível</span>
+      <div class="module-grid">
+        <button class="module-card" onclick="showView('clientes')">
+          <div class="module-icon">👤</div>
+          <div class="m-title">Clientes</div>
+          <div class="m-desc">Cadastro, busca e histórico</div>
+        </button>
+        <button class="module-card" onclick="showView('procedimentos')">
+          <div class="module-icon">💆</div>
+          <div class="m-title">Procedimentos</div>
+          <div class="m-desc">Catálogo e preços</div>
+        </button>
+        <button class="module-card" onclick="showView('agendamentos')">
+          <div class="module-icon">📅</div>
+          <div class="m-title">Agendamentos</div>
+          <div class="m-desc">Agenda e novos atendimentos</div>
+        </button>
+        <button class="module-card" onclick="showView('confirmacao')">
+          <div class="module-icon">✅</div>
+          <div class="m-title">Confirmação</div>
+          <div class="m-desc">Confirmar ou cancelar</div>
+        </button>
+        <button class="module-card" onclick="showView('avaliacoes')">
+          <div class="module-icon">⭐</div>
+          <div class="m-title">Avaliações</div>
+          <div class="m-desc">Feedback das clientes</div>
+        </button>
+        <button class="module-card" onclick="showView('financeiro')">
+          <div class="module-icon">💰</div>
+          <div class="m-title">Financeiro</div>
+          <div class="m-desc">Entradas, saídas e lucro</div>
+        </button>
+        <button class="module-card" onclick="showView('relatorios')">
+          <div class="module-icon">📊</div>
+          <div class="m-title">Relatórios</div>
+          <div class="m-desc">Visão geral da clínica</div>
+        </button>
+        <button class="module-card" onclick="showView('configuracoes')">
+          <div class="module-icon">⚙️</div>
+          <div class="m-title">Configurações</div>
+          <div class="m-desc">Clínica, backup, segurança</div>
+        </button>
+        <button class="module-card" onclick="showView('planos')">
+          <div class="module-icon">💳</div>
+          <div class="m-title">Planos</div>
+          <div class="m-desc">Assinatura da clínica</div>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===================== CLIENTES ===================== -->
+    <section class="view" id="view-clientes">
+      <h2 class="view-heading">Clientes</h2>
+      <p class="view-desc">Cadastre e acompanhe o histórico de cada cliente.</p>
+
+      <div class="card">
+        <h3>Nova cliente</h3>
+        <form id="formCliente" onsubmit="return addCliente(event)">
+          <label>Nome completo</label>
+          <input type="text" id="clNome" placeholder="Ex: Marina Costa" required>
+          <label>Telefone</label>
+          <input type="tel" id="clTelefone" placeholder="(11) 99999-0000" required>
+          <label>Tipo de pele / observações</label>
+          <textarea id="clObs" placeholder="Tipo de pele, alergias, contraindicações..."></textarea>
+          <button class="btn btn-primary" type="submit">Salvar cliente</button>
+        </form>
       </div>
 
-      <div class="feat-card">
-        <div class="feat-head"><div class="feat-icon">🚙</div><h3>Veículos</h3></div>
-        <ul>
-          <li>Placa, modelo e marca</li>
-          <li>Ano, cor e chassi</li>
-          <li>Quilometragem atualizada a cada visita</li>
-        </ul>
-        <span class="feat-status status-live">Disponível</span>
+      <div class="search-box">
+        <span class="icon">🔍</span>
+        <input type="text" id="buscaCliente" placeholder="Buscar cliente por nome..." oninput="renderClientes()">
       </div>
 
-      <div class="feat-card">
-        <div class="feat-head"><div class="feat-icon">🔧</div><h3>Ordem de Serviço</h3></div>
-        <ul>
-          <li>Defeito informado e diagnóstico</li>
-          <li>Peças utilizadas e mão de obra</li>
-          <li>Fotos do veículo anexadas à OS</li>
-        </ul>
-        <div class="os-flow">
-          <div class="os-step done">Recebido</div>
-          <div class="os-step">Em diagnóstico</div>
-          <div class="os-step">Em manutenção</div>
-          <div class="os-step">Aguardando peças</div>
-          <div class="os-step">Pronto</div>
-          <div class="os-step">Entregue</div>
-        </div>
-        <span class="feat-status status-live">Disponível</span>
+      <div id="listaClientes"></div>
+    </section>
+
+    <!-- ===================== PROCEDIMENTOS ===================== -->
+    <section class="view" id="view-procedimentos">
+      <h2 class="view-heading">Procedimentos</h2>
+      <p class="view-desc">Catálogo de procedimentos, preços e duração.</p>
+
+      <div class="card">
+        <h3>Adicionar procedimento</h3>
+        <form id="formProcedimento" onsubmit="return addProcedimento(event)">
+          <label>Nome do procedimento</label>
+          <input type="text" id="prNome" placeholder="Ex: Limpeza de pele profunda" required>
+          <label>Categoria</label>
+          <select id="prCategoria">
+            <option value="Facial">Facial</option>
+            <option value="Corporal">Corporal</option>
+            <option value="Capilar">Capilar</option>
+            <option value="Estética avançada">Estética avançada</option>
+          </select>
+          <label>Preço (R$)</label>
+          <input type="number" id="prPreco" step="0.01" min="0" placeholder="150,00" required>
+          <label>Duração (minutos)</label>
+          <input type="number" id="prDuracao" min="0" placeholder="60" required>
+          <label>Descrição</label>
+          <textarea id="prDescricao" placeholder="O que inclui o procedimento..."></textarea>
+          <button class="btn btn-primary" type="submit">Adicionar ao catálogo</button>
+        </form>
       </div>
 
-      <div class="feat-card">
-        <div class="feat-head"><div class="feat-icon">📅</div><h3>Agenda</h3></div>
-        <ul>
-          <li>Calendário mensal completo</li>
-          <li>Agendamento de revisões</li>
-          <li>Agendamento de troca de óleo</li>
-          <li>Lembretes internos</li>
-        </ul>
-        <span class="feat-status status-live">Disponível</span>
+      <div id="listaProcedimentos"></div>
+    </section>
+
+    <!-- ===================== AGENDAMENTOS ===================== -->
+    <section class="view" id="view-agendamentos">
+      <h2 class="view-heading">Agendamentos</h2>
+      <p class="view-desc">Agende novos atendimentos e acompanhe a agenda.</p>
+
+      <div class="card">
+        <h3>Novo agendamento</h3>
+        <form id="formAgendamento" onsubmit="return addAgendamento(event)">
+          <label>Cliente</label>
+          <select id="agCliente" required></select>
+          <label>Procedimento</label>
+          <select id="agProcedimento" required onchange="atualizarInfoProcedimento()"></select>
+          <div id="infoProcedimento" style="font-size:12px; color:var(--muted); margin-top:4px;"></div>
+          <label>Data</label>
+          <input type="date" id="agData" required>
+          <label>Hora</label>
+          <input type="time" id="agHora" required>
+          <button class="btn btn-primary" type="submit">Agendar atendimento</button>
+        </form>
       </div>
 
-      <div class="feat-card">
-        <div class="feat-head"><div class="feat-icon">📦</div><h3>Estoque</h3></div>
-        <ul>
-          <li>Peças, óleo, pneus e filtros</li>
-          <li>Controle de quantidade</li>
-          <li>Alerta automático de estoque baixo</li>
-        </ul>
-        <span class="feat-status status-live">Disponível</span>
+      <div class="tabs">
+        <button class="tab active" data-ftr="todas" onclick="filtrarAgendamentos('todas', this)">Todos</button>
+        <button class="tab" data-ftr="agendadas" onclick="filtrarAgendamentos('agendadas', this)">Agendados</button>
+        <button class="tab" data-ftr="realizadas" onclick="filtrarAgendamentos('realizadas', this)">Realizados</button>
       </div>
 
-      <div class="feat-card">
-        <div class="feat-head"><div class="feat-icon">💰</div><h3>Financeiro</h3></div>
-        <ul>
-          <li>Receitas e despesas</li>
-          <li>Fluxo de caixa</li>
-          <li>Contas a pagar e a receber</li>
-        </ul>
-        <span class="feat-status status-live">Disponível</span>
+      <div id="listaAgendamentos"></div>
+    </section>
+
+    <!-- ===================== CONFIRMAÇÃO ===================== -->
+    <section class="view" id="view-confirmacao">
+      <h2 class="view-heading">Confirmação</h2>
+      <p class="view-desc">Confirme ou cancele os atendimentos pendentes.</p>
+
+      <div class="tabs">
+        <button class="tab active" data-ftc="pendente" onclick="filtrarConfirmacao('pendente', this)">Pendentes</button>
+        <button class="tab" data-ftc="confirmada" onclick="filtrarConfirmacao('confirmada', this)">Confirmados</button>
+        <button class="tab" data-ftc="cancelada" onclick="filtrarConfirmacao('cancelada', this)">Cancelados</button>
       </div>
 
-      <div class="feat-card">
-        <div class="feat-head"><div class="feat-icon">📄</div><h3>Documentos em PDF</h3></div>
-        <ul>
-          <li>Orçamento</li>
-          <li>Ordem de Serviço</li>
-          <li>Recibo</li>
-          <li>Nota de serviço</li>
-        </ul>
-        <span class="feat-status status-live">Disponível</span>
+      <div id="listaConfirmacao"></div>
+    </section>
+
+    <!-- ===================== AVALIAÇÕES ===================== -->
+    <section class="view" id="view-avaliacoes">
+      <h2 class="view-heading">Avaliações</h2>
+      <p class="view-desc">Veja o que as clientes acham da clínica.</p>
+
+      <div class="stat-card" style="margin-bottom:16px;">
+        <div class="num" id="mediaAvaliacao">0.0 ⭐</div>
+        <div class="label">Média geral (<span id="totalAvaliacoes">0</span> avaliações)</div>
       </div>
 
-      <div class="feat-card">
-        <div class="feat-head"><div class="feat-icon">📊</div><h3>Relatórios</h3></div>
-        <ul>
-          <li>Clientes mais frequentes</li>
-          <li>Serviços mais vendidos</li>
-          <li>Lucro mensal</li>
-          <li>Estoque e funcionários</li>
-        </ul>
-        <span class="feat-status status-live">Disponível</span>
+      <div class="card">
+        <h3>Nova avaliação</h3>
+        <form id="formAvaliacao" onsubmit="return addAvaliacao(event)">
+          <label>Cliente</label>
+          <input type="text" id="avCliente" placeholder="Nome da cliente" required>
+          <label>Nota</label>
+          <select id="avNota" required>
+            <option value="5">⭐⭐⭐⭐⭐ Excelente</option>
+            <option value="4">⭐⭐⭐⭐ Muito bom</option>
+            <option value="3">⭐⭐⭐ Bom</option>
+            <option value="2">⭐⭐ Regular</option>
+            <option value="1">⭐ Ruim</option>
+          </select>
+          <label>Comentário</label>
+          <textarea id="avComentario" placeholder="O que a cliente disse?"></textarea>
+          <button class="btn btn-primary" type="submit">Registrar avaliação</button>
+        </form>
       </div>
 
-      <div class="feat-card">
-        <div class="feat-head"><div class="feat-icon">👨‍🔧</div><h3>Funcionários</h3></div>
-        <ul>
-          <li>Cadastro de mecânicos e função</li>
-          <li>Comissão por serviço</li>
-          <li>Agenda individual</li>
-        </ul>
-        <span class="feat-status status-live">Disponível</span>
+      <div id="listaAvaliacoes"></div>
+    </section>
+
+    <!-- ===================== FINANCEIRO ===================== -->
+    <section class="view" id="view-financeiro">
+      <h2 class="view-heading">Financeiro</h2>
+      <p class="view-desc">Controle simples de entradas e saídas.</p>
+
+      <div class="summary-row">
+        <div class="summary-cell"><div class="v pos" id="finEntradas">R$ 0</div><div class="l">Entradas</div></div>
+        <div class="summary-cell"><div class="v neg" id="finSaidas">R$ 0</div><div class="l">Saídas</div></div>
+        <div class="summary-cell"><div class="v" id="finLucro">R$ 0</div><div class="l">Lucro</div></div>
       </div>
 
-      <div class="feat-card">
-        <div class="feat-head"><div class="feat-icon">⚙️</div><h3>Configurações</h3></div>
-        <ul>
-          <li>Dados da oficina</li>
-          <li>Horário de funcionamento</li>
-          <li>Temas visuais</li>
-          <li>Backup dos dados</li>
-        </ul>
-        <span class="feat-status status-live">Disponível</span>
+      <div class="card">
+        <h3>Novo lançamento</h3>
+        <form id="formFinanceiro" onsubmit="return addFinanceiro(event)">
+          <label>Tipo</label>
+          <select id="fTipo">
+            <option value="entrada">Entrada</option>
+            <option value="saida">Saída</option>
+          </select>
+          <label>Descrição</label>
+          <input type="text" id="fDescricao" placeholder="Ex: Limpeza de pele - Marina Costa" required>
+          <label>Valor (R$)</label>
+          <input type="number" id="fValor" step="0.01" min="0" placeholder="0,00" required>
+          <button class="btn btn-primary" type="submit">Adicionar lançamento</button>
+        </form>
       </div>
 
-      <div class="feat-card">
-        <div class="feat-head"><div class="feat-icon">💳</div><h3>Pagamentos</h3></div>
-        <ul>
-          <li>Pix, cartão e dinheiro</li>
-          <li>Registro manual por OS</li>
-          <li>Integração com Mercado Pago</li>
-        </ul>
-        <span class="feat-status status-soon">Cobrança online em breve</span>
-      </div>
-    </div>
-  </section>
+      <div id="listaFinanceiro"></div>
+    </section>
 
-  <!-- ===================== TECNOLOGIA ===================== -->
-  <section style="background:var(--surface-2);">
-    <div class="wrap">
-      <span class="eyebrow">Por trás do sistema</span>
-      <h2 class="section-title">Feito pra crescer com a sua oficina</h2>
-      <p class="section-desc">A base já funciona hoje. Estes recursos avançados estão em desenvolvimento.</p>
+    <!-- ===================== RELATÓRIOS ===================== -->
+    <section class="view" id="view-relatorios">
+      <h2 class="view-heading">Relatórios</h2>
+      <p class="view-desc">Panorama geral da clínica.</p>
 
-      <div class="tech-card">
-        <div class="ic">🔐</div>
-        <div><div class="t">Login com usuários e permissões</div><div class="d">Cada funcionário com seu próprio acesso, dono vê tudo, mecânico vê só o que precisa.</div></div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="num" id="repClientes">0</div><div class="label">Total de clientes</div></div>
+        <div class="stat-card"><div class="num" id="repAtendimentos">0</div><div class="label">Atendimentos no total</div></div>
+        <div class="stat-card"><div class="num" id="repReceita">R$ 0</div><div class="label">Receita acumulada</div></div>
+        <div class="stat-card"><div class="num" id="repAvaliacao">0.0</div><div class="label">Nota média</div></div>
       </div>
-      <div class="tech-card">
-        <div class="ic">☁️</div>
-        <div><div class="t">Banco de dados na nuvem</div><div class="d">Seus dados salvos com segurança, acessíveis de qualquer aparelho.</div></div>
-      </div>
-      <div class="tech-card">
-        <div class="ic">📱</div>
-        <div><div class="t">Confirmação automática via WhatsApp</div><div class="d">O cliente recebe e confirma o agendamento sem ninguém precisar digitar nada.</div></div>
-      </div>
-      <div class="tech-card">
-        <div class="ic">🔔</div>
-        <div><div class="t">Notificações push</div><div class="d">Avisos chegando direto no celular, mesmo com o app fechado.</div></div>
-      </div>
-      <div class="status-list">
-        <span class="status-chip status-live">🟢 Cadastros, agenda, PDF e relatórios — já funcionam</span>
-        <span class="status-chip status-soon">🟡 Login em nuvem, WhatsApp, notificações e pagamento online — em desenvolvimento</span>
-      </div>
-    </div>
-  </section>
 
-  <!-- ===================== PLANOS ===================== -->
-  <section id="planos">
-    <div class="wrap">
-      <span class="eyebrow">Planos</span>
-      <h2 class="section-title">Escolha o plano da sua oficina</h2>
-      <p class="section-desc">Comece pequeno e mude de plano quando precisar.</p>
+      <div class="card">
+        <h3>Atendimentos por dia (últimos 7 dias)</h3>
+        <div class="chart-bars" id="chartAgendamentos"></div>
+      </div>
+    </section>
+
+    <!-- ===================== CONFIGURAÇÕES ===================== -->
+    <section class="view" id="view-configuracoes">
+      <h2 class="view-heading">Configurações</h2>
+      <p class="view-desc">Ajuste os dados e preferências da clínica.</p>
+
+      <div class="tabs">
+        <button class="tab active" data-cfg="perfil" onclick="mostrarConfig('perfil', this)">Perfil</button>
+        <button class="tab" data-cfg="seguranca" onclick="mostrarConfig('seguranca', this)">Segurança</button>
+        <button class="tab" data-cfg="backup" onclick="mostrarConfig('backup', this)">Backup</button>
+        <button class="tab" data-cfg="impressao" onclick="mostrarConfig('impressao', this)">Impressão</button>
+      </div>
+
+      <div class="card cfg-panel" id="cfg-perfil">
+        <h3>Perfil da clínica</h3>
+        <label>Nome da clínica</label>
+        <input type="text" id="cfgNome" value="Espaço Bella Estética">
+        <label>Telefone</label>
+        <input type="text" id="cfgTelefone" placeholder="(11) 3333-4444">
+        <label>Endereço</label>
+        <input type="text" id="cfgEndereco" placeholder="Rua Exemplo, 123 - São Paulo/SP">
+        <button class="btn btn-primary" onclick="salvarPerfilClinica()">Salvar alterações</button>
+      </div>
+
+      <div class="card cfg-panel" id="cfg-seguranca" style="display:none;">
+        <h3>Segurança</h3>
+        <label>Senha atual</label>
+        <input type="password" placeholder="••••••••">
+        <label>Nova senha</label>
+        <input type="password" placeholder="••••••••">
+        <button class="btn btn-primary" onclick="showToast('Senha atualizada (demonstração)')">Atualizar senha</button>
+      </div>
+
+      <div class="card cfg-panel" id="cfg-backup" style="display:none;">
+        <h3>Backup dos dados</h3>
+        <p class="view-desc" style="margin-bottom:12px;">Exporte um arquivo com todos os dados desta sessão.</p>
+        <button class="btn btn-outline" style="width:100%; margin-bottom:10px;" onclick="exportarBackup()">⬇ Exportar backup (.json)</button>
+        <p style="font-size:12px; color:var(--muted);">Nesta versão MVP os dados ficam apenas na memória do app. A próxima etapa é conectar um banco de dados real para backup automático.</p>
+      </div>
+
+      <div class="card cfg-panel" id="cfg-impressao" style="display:none;">
+        <h3>Impressão</h3>
+        <label>Cabeçalho dos documentos</label>
+        <input type="text" id="cfgCabecalho" placeholder="Ex: Espaço Bella Estética - CNPJ 00.000.000/0001-00">
+        <label>Rodapé dos documentos</label>
+        <input type="text" id="cfgRodape" placeholder="Ex: Atendimento com hora marcada">
+        <button class="btn btn-primary" onclick="showToast('Modelo de impressão salvo')">Salvar modelo</button>
+      </div>
+    </section>
+
+    <!-- ===================== PLANOS ===================== -->
+    <section class="view" id="view-planos">
+      <h2 class="view-heading">Planos</h2>
+      <p class="view-desc">Escolha o plano ideal para o tamanho da sua clínica.</p>
 
       <div class="plan-card">
         <h3>Básico</h3>
-        <div class="price">R$ 89<span>/mês</span></div>
+        <div class="price">R$ 79<span>/mês</span></div>
         <ul>
           <li>Até 100 clientes</li>
-          <li>Agenda simples</li>
-          <li>Ordens de serviço e PDF</li>
+          <li>Agenda de atendimentos</li>
+          <li>Confirmação manual</li>
         </ul>
-        <button class="btn btn-outline-dark btn-block">Assinar Básico</button>
+        <button class="btn btn-outline" style="width:100%;" onclick="selecionarPlano('Básico', this)">Selecionar</button>
       </div>
 
       <div class="plan-card featured">
         <span class="tag">Mais popular</span>
         <h3>Pro</h3>
-        <div class="price">R$ 169<span>/mês</span></div>
+        <div class="price">R$ 149<span>/mês</span></div>
         <ul>
-          <li>Clientes e veículos ilimitados</li>
-          <li>Agenda com calendário completo</li>
-          <li>Estoque com alerta automático</li>
-          <li>Relatórios completos</li>
+          <li>Clientes ilimitadas</li>
+          <li>Financeiro completo</li>
+          <li>Relatórios e avaliações</li>
+          <li>Confirmação automática</li>
         </ul>
-        <button class="btn btn-accent btn-block">Assinar Pro</button>
+        <button class="btn btn-accent" style="width:100%;" onclick="selecionarPlano('Pro', this)">Selecionar</button>
       </div>
 
       <div class="plan-card">
         <h3>Premium</h3>
-        <div class="price">R$ 289<span>/mês</span></div>
+        <div class="price">R$ 259<span>/mês</span></div>
         <ul>
           <li>Tudo do plano Pro</li>
-          <li>Múltiplos funcionários e comissões</li>
+          <li>Múltiplas unidades</li>
           <li>Backup automático</li>
           <li>Suporte prioritário</li>
         </ul>
-        <button class="btn btn-outline-dark btn-block">Assinar Premium</button>
+        <button class="btn btn-outline" style="width:100%;" onclick="selecionarPlano('Premium', this)">Selecionar</button>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ===================== FAQ ===================== -->
-  <section style="background:var(--surface-2);">
-    <div class="wrap">
-      <span class="eyebrow">Dúvidas</span>
-      <h2 class="section-title">Perguntas frequentes</h2>
+  </main>
+</div>
 
-      <div id="faqList">
-        <div class="faq-item">
-          <button class="faq-q" onclick="toggleFaq(this)">Preciso instalar algum programa?<span class="x">+</span></button>
-          <div class="faq-a"><p>Não. O sistema roda direto no navegador do celular ou computador, sem instalação.</p></div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q" onclick="toggleFaq(this)">Funciona sem internet?<span class="x">+</span></button>
-          <div class="faq-a"><p>É preciso estar conectado, já que os dados e alguns recursos (como PDF e fontes) são carregados pela internet.</p></div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q" onclick="toggleFaq(this)">Consigo mudar de plano depois?<span class="x">+</span></button>
-          <div class="faq-a"><p>Sim, você pode subir ou descer de plano a qualquer momento conforme a oficina crescer.</p></div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q" onclick="toggleFaq(this)">O sistema emite recibo e orçamento em PDF?<span class="x">+</span></button>
-          <div class="faq-a"><p>Sim, orçamento, ordem de serviço, recibo e nota de serviço são gerados em PDF direto pelo sistema.</p></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== CTA FINAL ===================== -->
-  <section>
-    <div class="cta-final">
-      <h2>Pronto pra organizar sua oficina?</h2>
-      <p>Comece agora e veja a diferença já na primeira semana.</p>
-      <a href="#planos" class="btn btn-accent btn-block">Escolher meu plano</a>
-    </div>
-  </section>
-
-  <footer>
-    <div class="brand">🔧 OficinaGestão</div>
-    <div class="links">
-      <a href="#recursos">Recursos</a>
-      <a href="#planos">Planos</a>
-      <a href="#faqList">Dúvidas</a>
-    </div>
-    <p>© 2026 OficinaGestão. Sistema de gestão para oficinas mecânicas.</p>
-  </footer>
+<div class="toast" id="toast"></div>
 
 <script>
-function toggleFaq(btn){
-  const item = btn.closest('.faq-item');
-  const estavaAberto = item.classList.contains('open');
-  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-  if(!estavaAberto) item.classList.add('open');
+/* ============================================================
+   ESTADO EM MEMÓRIA (MVP)
+   Próxima etapa do projeto: substituir por backend + banco de
+   dados real (ex: Node/Express + PostgreSQL) para persistência,
+   login multi-clínica e pagamentos.
+   ============================================================ */
+let clientes = [
+  { id:1, nome:'Marina Costa', telefone:'(11) 99887-1122', obs:'Pele mista, sem alergias conhecidas.' },
+  { id:2, nome:'Juliana Prado', telefone:'(11) 98123-4455', obs:'Sensibilidade a produtos com ácido salicílico.' }
+];
+let procedimentos = [
+  { id:1, nome:'Limpeza de pele profunda', categoria:'Facial', preco:150.00, duracao:60, descricao:'Higienização, esfoliação e extração com máscara calmante.' },
+  { id:2, nome:'Massagem modeladora', categoria:'Corporal', preco:120.00, duracao:50, descricao:'Sessão de massagem para redução de medidas e relaxamento.' },
+  { id:3, nome:'Design de sobrancelhas', categoria:'Facial', preco:60.00, duracao:30, descricao:'Design com henna e acabamento com pinça.' }
+];
+let agendamentos = [
+  { id:1, clienteId:1, procedimentoId:1, data: hojeISO(), hora:'09:00', status:'agendada', confirmacao:'pendente' },
+  { id:2, clienteId:2, procedimentoId:3, data: hojeISO(), hora:'14:30', status:'agendada', confirmacao:'confirmada' }
+];
+let avaliacoes = [
+  { id:1, cliente:'Marina Costa', nota:5, comentario:'Atendimento maravilhoso, saí renovada!' }
+];
+let financeiro = [
+  { id:1, tipo:'entrada', descricao:'Limpeza de pele - Marina Costa', valor:150 },
+  { id:2, tipo:'saida', descricao:'Produtos e insumos', valor:45 }
+];
+let planoAtual = null;
+let nextId = { cliente:3, procedimento:4, agendamento:3, avaliacao:2, financeiro:3 };
+
+function hojeISO(){
+  return new Date().toISOString().slice(0,10);
 }
+
+/* ============================================================
+   NAVEGAÇÃO
+   ============================================================ */
+const titulos = {
+  home: ['BellaGestão','Espaço Bella Estética'],
+  clientes: ['Clientes','Cadastro e histórico'],
+  procedimentos: ['Procedimentos','Catálogo e preços'],
+  agendamentos: ['Agendamentos','Agenda da clínica'],
+  confirmacao: ['Confirmação','Atendimentos pendentes'],
+  avaliacoes: ['Avaliações','Feedback das clientes'],
+  financeiro: ['Financeiro','Entradas e saídas'],
+  relatorios: ['Relatórios','Visão geral'],
+  configuracoes: ['Configurações','Preferências da clínica'],
+  planos: ['Planos','Assinatura da clínica']
+};
+
+function showView(id){
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + id).classList.add('active');
+  document.getElementById('backBtn').classList.toggle('show', id !== 'home');
+  document.getElementById('topTitle').textContent = titulos[id][0];
+  document.getElementById('topSub').textContent = titulos[id][1];
+  window.scrollTo(0,0);
+
+  if(id === 'clientes') renderClientes();
+  if(id === 'procedimentos') renderProcedimentos();
+  if(id === 'agendamentos') { popularSelects(); renderAgendamentos('todas'); }
+  if(id === 'confirmacao') renderConfirmacao('pendente');
+  if(id === 'avaliacoes') renderAvaliacoes();
+  if(id === 'financeiro') renderFinanceiro();
+  if(id === 'relatorios') renderRelatorios();
+  if(id === 'home') renderHome();
+}
+
+function goHome(){ showView('home'); }
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function formatMoeda(v){
+  return 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function iniciais(nome){
+  return nome.split(' ').filter(Boolean).slice(0,2).map(p=>p[0]).join('').toUpperCase();
+}
+function formatarData(iso){
+  if(!iso) return '';
+  const [ano,mes,dia] = iso.split('-');
+  return `${dia}/${mes}/${ano}`;
+}
+
+/* ============================================================
+   HOME
+   ============================================================ */
+function renderHome(){
+  document.getElementById('statClientes').textContent = clientes.length;
+  document.getElementById('statAgendaHoje').textContent =
+    agendamentos.filter(a => a.data === hojeISO()).length;
+  document.getElementById('statPendentes').textContent =
+    agendamentos.filter(a => a.confirmacao === 'pendente').length;
+  const receita = financeiro.filter(f=>f.tipo==='entrada').reduce((s,f)=>s+f.valor,0);
+  document.getElementById('statReceita').textContent = formatMoeda(receita);
+}
+
+/* ============================================================
+   CLIENTES
+   ============================================================ */
+function addCliente(e){
+  e.preventDefault();
+  const nome = document.getElementById('clNome').value.trim();
+  const telefone = document.getElementById('clTelefone').value.trim();
+  const obs = document.getElementById('clObs').value.trim();
+  clientes.push({ id: nextId.cliente++, nome, telefone, obs });
+  document.getElementById('formCliente').reset();
+  renderClientes();
+  showToast('Cliente cadastrada com sucesso');
+  return false;
+}
+
+function excluirCliente(id){
+  clientes = clientes.filter(c => c.id !== id);
+  renderClientes();
+  showToast('Cliente removida');
+}
+
+function renderClientes(){
+  const termo = (document.getElementById('buscaCliente')?.value || '').toLowerCase();
+  const lista = document.getElementById('listaClientes');
+  const filtrados = clientes.filter(c => c.nome.toLowerCase().includes(termo));
+
+  if(filtrados.length === 0){
+    lista.innerHTML = `<div class="empty-state"><div class="e-icon">👤</div><p>Nenhuma cliente encontrada.</p></div>`;
+    return;
+  }
+
+  lista.innerHTML = filtrados.map(c => `
+    <div class="list-item">
+      <div class="avatar">${iniciais(c.nome)}</div>
+      <div class="li-body">
+        <div class="li-title">${c.nome}</div>
+        <div class="li-sub">${c.telefone || 'Sem telefone'}${c.obs ? ' · ' + c.obs : ''}</div>
+      </div>
+      <div class="li-actions">
+        <button class="btn btn-danger btn-sm" onclick="excluirCliente(${c.id})">Excluir</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   PROCEDIMENTOS
+   ============================================================ */
+function addProcedimento(e){
+  e.preventDefault();
+  const nome = document.getElementById('prNome').value.trim();
+  const categoria = document.getElementById('prCategoria').value;
+  const preco = Number(document.getElementById('prPreco').value);
+  const duracao = Number(document.getElementById('prDuracao').value);
+  const descricao = document.getElementById('prDescricao').value.trim();
+  procedimentos.push({ id: nextId.procedimento++, nome, categoria, preco, duracao, descricao });
+  document.getElementById('formProcedimento').reset();
+  renderProcedimentos();
+  showToast('Procedimento adicionado ao catálogo');
+  return false;
+}
+
+function excluirProcedimento(id){
+  procedimentos = procedimentos.filter(p => p.id !== id);
+  renderProcedimentos();
+  showToast('Procedimento removido');
+}
+
+function renderProcedimentos(){
+  const el = document.getElementById('listaProcedimentos');
+  if(procedimentos.length === 0){
+    el.innerHTML = `<div class="empty-state"><div class="e-icon">💆</div><p>Nenhum procedimento cadastrado ainda.</p></div>`;
+    return;
+  }
+  el.innerHTML = procedimentos.map(p => `
+    <div class="proc-item">
+      <div class="proc-head">
+        <div class="proc-name">${p.nome}</div>
+        <div class="proc-price">${formatMoeda(p.preco)}</div>
+      </div>
+      <div class="proc-meta">${p.categoria} · ${p.duracao} min</div>
+      ${p.descricao ? `<div class="proc-desc">${p.descricao}</div>` : ''}
+      <div class="proc-actions">
+        <button class="btn btn-danger btn-sm" onclick="excluirProcedimento(${p.id})">Excluir</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   AGENDAMENTOS
+   ============================================================ */
+function popularSelects(){
+  const selC = document.getElementById('agCliente');
+  selC.innerHTML = clientes.map(c => `<option value="${c.id}">${c.nome}</option>`).join('')
+    || '<option value="">Cadastre uma cliente primeiro</option>';
+
+  const selP = document.getElementById('agProcedimento');
+  selP.innerHTML = procedimentos.map(p => `<option value="${p.id}">${p.nome}</option>`).join('')
+    || '<option value="">Cadastre um procedimento primeiro</option>';
+  atualizarInfoProcedimento();
+}
+
+function atualizarInfoProcedimento(){
+  const id = Number(document.getElementById('agProcedimento').value);
+  const p = procedimentos.find(p => p.id === id);
+  const info = document.getElementById('infoProcedimento');
+  info.textContent = p ? `${formatMoeda(p.preco)} · ${p.duracao} min · ${p.categoria}` : '';
+}
+
+function addAgendamento(e){
+  e.preventDefault();
+  const clienteId = Number(document.getElementById('agCliente').value);
+  const procedimentoId = Number(document.getElementById('agProcedimento').value);
+  const data = document.getElementById('agData').value;
+  const hora = document.getElementById('agHora').value;
+  if(!clienteId){ showToast('Cadastre uma cliente antes de agendar'); return false; }
+  if(!procedimentoId){ showToast('Cadastre um procedimento antes de agendar'); return false; }
+  agendamentos.push({ id: nextId.agendamento++, clienteId, procedimentoId, data, hora, status:'agendada', confirmacao:'pendente' });
+  document.getElementById('formAgendamento').reset();
+  renderAgendamentos('todas');
+  showToast('Atendimento agendado');
+  return false;
+}
+
+function nomeCliente(id){
+  const c = clientes.find(c => c.id === id);
+  return c ? c.nome : 'Cliente removida';
+}
+function nomeProcedimento(id){
+  const p = procedimentos.find(p => p.id === id);
+  return p ? p.nome : 'Procedimento removido';
+}
+
+function marcarRealizado(id){
+  const a = agendamentos.find(a => a.id === id);
+  if(a) a.status = 'realizada';
+  renderAgendamentos(document.querySelector('#view-agendamentos .tab.active').dataset.ftr);
+  showToast('Atendimento marcado como realizado');
+}
+
+function filtrarAgendamentos(filtro, btn){
+  document.querySelectorAll('#view-agendamentos .tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderAgendamentos(filtro);
+}
+
+function renderAgendamentos(filtro){
+  let lista = agendamentos;
+  if(filtro === 'agendadas') lista = agendamentos.filter(a => a.status === 'agendada');
+  if(filtro === 'realizadas') lista = agendamentos.filter(a => a.status === 'realizada');
+
+  const el = document.getElementById('listaAgendamentos');
+  if(lista.length === 0){
+    el.innerHTML = `<div class="empty-state"><div class="e-icon">📅</div><p>Nenhum atendimento por aqui ainda.</p></div>`;
+    return;
+  }
+
+  el.innerHTML = [...lista].sort((a,b)=> (a.data+a.hora).localeCompare(b.data+b.hora)).map(a => `
+    <div class="list-item">
+      <div class="avatar">${iniciais(nomeCliente(a.clienteId))}</div>
+      <div class="li-body">
+        <div class="li-title">${nomeCliente(a.clienteId)}</div>
+        <div class="li-sub">${formatarData(a.data)} às ${a.hora} · ${nomeProcedimento(a.procedimentoId)}</div>
+      </div>
+      <div class="li-actions">
+        ${a.status === 'agendada'
+          ? `<span class="badge badge-warning">Agendado</span><button class="btn btn-outline btn-sm" onclick="marcarRealizado(${a.id})">Concluir</button>`
+          : `<span class="badge badge-success">Realizado</span>`}
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   CONFIRMAÇÃO
+   ============================================================ */
+function filtrarConfirmacao(filtro, btn){
+  document.querySelectorAll('#view-confirmacao .tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderConfirmacao(filtro);
+}
+
+function definirConfirmacao(id, status){
+  const a = agendamentos.find(a => a.id === id);
+  if(a) a.confirmacao = status;
+  renderConfirmacao(document.querySelector('#view-confirmacao .tab.active').dataset.ftc);
+  showToast(status === 'confirmada' ? 'Atendimento confirmado' : 'Atendimento cancelado');
+}
+
+function renderConfirmacao(filtro){
+  const lista = agendamentos.filter(a => a.confirmacao === filtro);
+  const el = document.getElementById('listaConfirmacao');
+
+  if(lista.length === 0){
+    el.innerHTML = `<div class="empty-state"><div class="e-icon">✅</div><p>Nada por aqui no momento.</p></div>`;
+    return;
+  }
+
+  el.innerHTML = lista.map(a => `
+    <div class="list-item">
+      <div class="avatar">${iniciais(nomeCliente(a.clienteId))}</div>
+      <div class="li-body">
+        <div class="li-title">${nomeCliente(a.clienteId)}</div>
+        <div class="li-sub">${formatarData(a.data)} às ${a.hora} · ${nomeProcedimento(a.procedimentoId)}</div>
+      </div>
+      <div class="li-actions">
+        ${filtro === 'pendente' ? `
+          <button class="btn btn-primary btn-sm" style="margin:0;" onclick="definirConfirmacao(${a.id},'confirmada')">Confirmar</button>
+          <button class="btn btn-danger btn-sm" onclick="definirConfirmacao(${a.id},'cancelada')">Cancelar</button>
+        ` : filtro === 'confirmada'
+          ? `<span class="badge badge-success">Confirmado</span>`
+          : `<span class="badge badge-danger">Cancelado</span>`}
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   AVALIAÇÕES
+   ============================================================ */
+function addAvaliacao(e){
+  e.preventDefault();
+  const cliente = document.getElementById('avCliente').value.trim();
+  const nota = Number(document.getElementById('avNota').value);
+  const comentario = document.getElementById('avComentario').value.trim();
+  avaliacoes.push({ id: nextId.avaliacao++, cliente, nota, comentario });
+  document.getElementById('formAvaliacao').reset();
+  renderAvaliacoes();
+  showToast('Avaliação registrada');
+  return false;
+}
+
+function renderAvaliacoes(){
+  const media = avaliacoes.length
+    ? (avaliacoes.reduce((s,a)=>s+a.nota,0) / avaliacoes.length)
+    : 0;
+  document.getElementById('mediaAvaliacao').textContent = media.toFixed(1) + ' ⭐';
+  document.getElementById('totalAvaliacoes').textContent = avaliacoes.length;
+
+  const el = document.getElementById('listaAvaliacoes');
+  if(avaliacoes.length === 0){
+    el.innerHTML = `<div class="empty-state"><div class="e-icon">⭐</div><p>Ainda não há avaliações.</p></div>`;
+    return;
+  }
+
+  el.innerHTML = [...avaliacoes].reverse().map(a => `
+    <div class="list-item">
+      <div class="avatar">${iniciais(a.cliente)}</div>
+      <div class="li-body">
+        <div class="li-title">${a.cliente} · ${'⭐'.repeat(a.nota)}</div>
+        <div class="li-sub">${a.comentario || 'Sem comentário.'}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   FINANCEIRO
+   ============================================================ */
+function addFinanceiro(e){
+  e.preventDefault();
+  const tipo = document.getElementById('fTipo').value;
+  const descricao = document.getElementById('fDescricao').value.trim();
+  const valor = Number(document.getElementById('fValor').value);
+  financeiro.push({ id: nextId.financeiro++, tipo, descricao, valor });
+  document.getElementById('formFinanceiro').reset();
+  renderFinanceiro();
+  showToast('Lançamento adicionado');
+  return false;
+}
+
+function renderFinanceiro(){
+  const entradas = financeiro.filter(f=>f.tipo==='entrada').reduce((s,f)=>s+f.valor,0);
+  const saidas = financeiro.filter(f=>f.tipo==='saida').reduce((s,f)=>s+f.valor,0);
+  document.getElementById('finEntradas').textContent = formatMoeda(entradas);
+  document.getElementById('finSaidas').textContent = formatMoeda(saidas);
+  const lucroEl = document.getElementById('finLucro');
+  lucroEl.textContent = formatMoeda(entradas - saidas);
+  lucroEl.className = 'v ' + (entradas - saidas >= 0 ? 'pos' : 'neg');
+
+  const el = document.getElementById('listaFinanceiro');
+  if(financeiro.length === 0){
+    el.innerHTML = `<div class="empty-state"><div class="e-icon">💰</div><p>Nenhum lançamento ainda.</p></div>`;
+    return;
+  }
+
+  el.innerHTML = [...financeiro].reverse().map(f => `
+    <div class="list-item">
+      <div class="avatar" style="background:${f.tipo==='entrada' ? 'rgba(63,143,109,0.14)' : 'rgba(178,58,92,0.12)'}; color:${f.tipo==='entrada' ? 'var(--success)' : 'var(--danger)'};">
+        ${f.tipo==='entrada' ? '↑' : '↓'}
+      </div>
+      <div class="li-body">
+        <div class="li-title">${f.descricao}</div>
+        <div class="li-sub">${f.tipo === 'entrada' ? 'Entrada' : 'Saída'}</div>
+      </div>
+      <div class="li-actions">
+        <span class="mono" style="font-weight:600; color:${f.tipo==='entrada' ? 'var(--success)' : 'var(--danger)'};">
+          ${f.tipo==='entrada' ? '+' : '-'} ${formatMoeda(f.valor)}
+        </span>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   RELATÓRIOS
+   ============================================================ */
+function renderRelatorios(){
+  document.getElementById('repClientes').textContent = clientes.length;
+  document.getElementById('repAtendimentos').textContent = agendamentos.length;
+  const receita = financeiro.filter(f=>f.tipo==='entrada').reduce((s,f)=>s+f.valor,0);
+  document.getElementById('repReceita').textContent = formatMoeda(receita);
+  const media = avaliacoes.length
+    ? (avaliacoes.reduce((s,a)=>s+a.nota,0) / avaliacoes.length)
+    : 0;
+  document.getElementById('repAvaliacao').textContent = media.toFixed(1);
+
+  const dias = [];
+  for(let i=6; i>=0; i--){
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    dias.push(d.toISOString().slice(0,10));
+  }
+  const contagens = dias.map(d => agendamentos.filter(a => a.data === d).length);
+  const max = Math.max(...contagens, 1);
+
+  const chart = document.getElementById('chartAgendamentos');
+  chart.innerHTML = dias.map((d,i) => {
+    const altura = Math.max(6, (contagens[i]/max) * 100);
+    const rotulo = d.slice(8,10) + '/' + d.slice(5,7);
+    return `<div class="bar-col">
+      <div class="bar" style="height:${altura}%;" title="${contagens[i]} atendimento(s)"></div>
+      <div class="bar-label">${rotulo}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ============================================================
+   CONFIGURAÇÕES
+   ============================================================ */
+function mostrarConfig(nome, btn){
+  document.querySelectorAll('#view-configuracoes .tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.cfg-panel').forEach(p => p.style.display = 'none');
+  document.getElementById('cfg-' + nome).style.display = 'block';
+}
+
+function salvarPerfilClinica(){
+  const nome = document.getElementById('cfgNome').value.trim() || 'Espaço Bella Estética';
+  document.getElementById('topSub').textContent = nome;
+  titulos.home[1] = nome;
+  showToast('Perfil da clínica atualizado');
+}
+
+function exportarBackup(){
+  const dados = { clientes, procedimentos, agendamentos, avaliacoes, financeiro };
+  const blob = new Blob([JSON.stringify(dados, null, 2)], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'backup-clinica-estetica.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  showToast('Backup exportado');
+}
+
+/* ============================================================
+   PLANOS
+   ============================================================ */
+function selecionarPlano(nome, btn){
+  planoAtual = nome;
+  document.querySelectorAll('.plan-card button').forEach(b => {
+    b.textContent = 'Selecionar';
+    b.className = b.closest('.plan-card').classList.contains('featured') ? 'btn btn-accent' : 'btn btn-outline';
+    b.style.width = '100%';
+  });
+  btn.textContent = 'Plano atual ✓';
+  btn.className = 'btn btn-primary';
+  btn.style.width = '100%';
+  showToast('Plano ' + nome + ' selecionado');
+}
+
+/* ============================================================
+   INICIALIZAÇÃO
+   ============================================================ */
+document.getElementById('agData') && (document.getElementById('agData').min = hojeISO());
+renderHome();
 </script>
 </body>
 </html>
