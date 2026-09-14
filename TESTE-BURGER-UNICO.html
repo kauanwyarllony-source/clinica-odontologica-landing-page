@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>BurgerGestão — SaaS para Lanchonetes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #FFF8F0;
+    --surface: #FFFFFF;
+    --surface-2: #FFF1E2;
+    --border: #F2DFC9;
+    --primary: #C1272D;
+    --primary-bright: #E14E42;
+    --accent: #F4A300;
+    --accent-2: #D98324;
+    --text: #2B1B12;
+    --muted: #8A6F5C;
+    --success: #3C8F5C;
+    --danger: #B23A3A;
+    --warning: #D98324;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 4px 18px rgba(193,39,45,0.10);
+    --shadow-lg: 0 12px 32px rgba(193,39,45,0.18);
+  }
+  *{ box-sizing:border-box; }
+  html,body{
+    margin:0; padding:0; background:var(--bg); color:var(--text);
+    font-family:'Inter',-apple-system,sans-serif; -webkit-tap-highlight-color:transparent;
+  }
+  h1,h2,h3,.brand{ font-family:'Baloo 2', sans-serif; letter-spacing:-0.01em; }
+  .mono{ font-family:'JetBrains Mono',monospace; }
+  button{ font-family:inherit; cursor:pointer; }
+
+  #app{ max-width:520px; margin:0 auto; min-height:100vh; background:var(--bg); display:flex; flex-direction:column; }
+
+  header.topbar{
+    position:sticky; top:0; z-index:20; background:var(--primary); color:#fff;
+    padding:18px 18px 22px; border-radius:0 0 22px 22px; box-shadow:var(--shadow-lg);
+  }
+  .topbar-row{ display:flex; align-items:center; gap:12px; }
+  .back-btn{
+    display:none; align-items:center; justify-content:center; width:38px; height:38px;
+    border-radius:12px; background:rgba(255,255,255,0.16); border:none; color:#fff; font-size:18px; flex-shrink:0;
+  }
+  .back-btn.show{ display:flex; }
+  .topbar-title{ flex:1; min-width:0; }
+  .topbar-title .brand{ font-size:21px; font-weight:700; margin:0; line-height:1.2; }
+  .topbar-title .sub{ font-size:12.5px; color:rgba(255,255,255,0.75); margin-top:2px; }
+  .flame-line{ margin-top:14px; height:22px; width:100%; opacity:0.9; }
+  .flame-line path{
+    fill:none; stroke:var(--accent); stroke-width:2; stroke-linecap:round; stroke-linejoin:round;
+    stroke-dasharray:340; stroke-dashoffset:340; animation:draw 2.6s ease-in-out infinite;
+  }
+  @keyframes draw{ 0%{stroke-dashoffset:340;} 45%{stroke-dashoffset:0;} 70%{stroke-dashoffset:0;} 100%{stroke-dashoffset:-340;} }
+  @media (prefers-reduced-motion:reduce){ .flame-line path{ animation:none; stroke-dashoffset:0; } }
+
+  main{ flex:1; padding:18px 18px 100px; }
+  .view{ display:none; animation:fadein .25s ease; }
+  .view.active{ display:block; }
+  @keyframes fadein{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .view-heading{ font-size:22px; font-weight:700; margin:4px 0 4px; }
+  .view-desc{ color:var(--muted); font-size:13.5px; margin:0 0 18px; }
+
+  .stats-row{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin:16px 0 20px; }
+  .stat-card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 14px; }
+  .stat-card .num{ font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:700; color:var(--primary); }
+  .stat-card .label{ font-size:11.5px; color:var(--muted); margin-top:2px; }
+
+  .module-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+  .module-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px 14px;
+    text-align:left; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow);
+    transition:transform .15s ease;
+  }
+  .module-card:active{ transform:scale(0.97); }
+  .module-icon{
+    width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center;
+    font-size:19px; background:var(--surface-2); color:var(--accent-2);
+  }
+  .module-card .m-title{ font-weight:700; font-size:14.5px; }
+  .module-card .m-desc{ font-size:11.5px; color:var(--muted); line-height:1.4; }
+
+  .card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:16px; box-shadow:var(--shadow); }
+  .card h3{ margin:0 0 12px; font-size:15.5px; }
+  label{ display:block; font-size:12.5px; color:var(--muted); margin:10px 0 4px; }
+  input, select, textarea{
+    width:100%; padding:10px 12px; border-radius:var(--radius-sm); border:1px solid var(--border);
+    background:var(--surface); color:var(--text); font-size:14px; font-family:inherit;
+  }
+  input:focus, select:focus, textarea:focus{ outline:2px solid var(--primary-bright); outline-offset:1px; }
+  textarea{ resize:vertical; min-height:60px; }
+
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:11px 16px; border-radius:12px; border:none; font-weight:700; font-size:14px; }
+  .btn-primary{ background:var(--primary); color:#fff; width:100%; margin-top:14px; }
+  .btn-primary:active{ background:var(--primary-bright); }
+  .btn-accent{ background:var(--accent); color:#fff; }
+  .btn-outline{ background:transparent; color:var(--primary); border:1px solid var(--border); }
+  .btn-whats{ background:#25D366; color:#fff; }
+  .btn-danger{ background:rgba(178,58,58,0.1); color:var(--danger); }
+  .btn-sm{ padding:7px 11px; font-size:12.5px; border-radius:9px; }
+
+  .menu-item{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px; margin-bottom:10px; }
+  .menu-item-head{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
+  .menu-item-name{ font-weight:700; font-size:15.5px; }
+  .menu-item-price{ font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--primary); font-size:14.5px; white-space:nowrap; }
+  .menu-item-ing{ font-size:12.5px; color:var(--muted); margin-top:6px; line-height:1.5; }
+  .menu-item-actions{ display:flex; gap:6px; margin-top:10px; }
+
+  .qty-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; background:var(--surface-2); border-radius:var(--radius-sm); padding:8px 10px; margin-bottom:8px; }
+  .qty-row .qn{ font-weight:600; font-size:13.5px; }
+  .qty-controls{ display:flex; align-items:center; gap:8px; }
+  .qty-btn{ width:26px; height:26px; border-radius:8px; border:1px solid var(--border); background:var(--surface); font-weight:700; }
+  .qty-val{ min-width:16px; text-align:center; font-weight:700; font-size:13px; }
+
+  .tabs{ display:flex; gap:6px; margin-bottom:16px; overflow-x:auto; }
+  .tab{ padding:8px 13px; border-radius:20px; font-size:12.5px; font-weight:700; background:var(--surface); border:1px solid var(--border); color:var(--muted); white-space:nowrap; }
+  .tab.active{ background:var(--primary); color:#fff; border-color:var(--primary); }
+
+  .order-card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:14px; margin-bottom:12px; box-shadow:var(--shadow); }
+  .order-top{ display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px; }
+  .order-id{ font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--muted); font-size:12px; }
+  .order-cliente{ font-weight:700; font-size:14.5px; }
+  .order-tipo{ font-size:11.5px; color:var(--muted); margin-top:1px; }
+  .order-items{ font-size:13px; margin:8px 0; line-height:1.6; }
+  .order-endereco{ font-size:12.5px; color:var(--muted); background:var(--surface-2); border-radius:8px; padding:8px 10px; margin:8px 0; }
+  .order-total{ font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--primary); font-size:14.5px; }
+  .order-actions{ display:flex; gap:8px; margin-top:10px; }
+
+  .badge{ font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:20px; text-transform:uppercase; letter-spacing:.03em; }
+  .badge-warning{ background:rgba(217,131,36,0.15); color:var(--warning); }
+  .badge-info{ background:rgba(60,143,92,0.14); color:var(--success); }
+  .badge-success{ background:rgba(60,143,92,0.14); color:var(--success); }
+  .badge-muted{ background:var(--surface-2); color:var(--muted); }
+  .badge-primary{ background:rgba(193,39,45,0.12); color:var(--primary); }
+
+  .moto-card{
+    background:linear-gradient(135deg, var(--primary), var(--primary-bright)); color:#fff;
+    border-radius:var(--radius); padding:16px; margin-bottom:14px; box-shadow:var(--shadow-lg);
+  }
+  .moto-card .moto-tag{ font-size:11px; font-weight:700; opacity:0.85; text-transform:uppercase; letter-spacing:.04em; }
+  .moto-card .moto-msg{ font-family:'Baloo 2',sans-serif; font-size:17px; font-weight:700; margin:6px 0 8px; }
+  .moto-card .moto-end{ background:rgba(255,255,255,0.16); border-radius:10px; padding:9px 11px; font-size:13px; margin-bottom:10px; }
+  .moto-card .moto-items{ font-size:12.5px; opacity:0.9; margin-bottom:10px; line-height:1.5; }
+  .moto-card .btn-outline{ background:rgba(255,255,255,0.14); color:#fff; border:1px solid rgba(255,255,255,0.4); width:100%; }
+
+  .empty-state{ text-align:center; padding:34px 10px; color:var(--muted); }
+  .empty-state .e-icon{ font-size:30px; margin-bottom:8px; }
+  .empty-state p{ font-size:13px; margin:0; }
+
+  .cart-bar{
+    position:fixed; left:50%; bottom:16px; transform:translateX(-50%); width:calc(100% - 36px); max-width:484px;
+    background:var(--text); color:#fff; border-radius:16px; padding:12px 16px; display:none;
+    align-items:center; justify-content:space-between; box-shadow:var(--shadow-lg); z-index:40;
+  }
+  .cart-bar.show{ display:flex; }
+  .cart-bar .ci{ font-size:13px; }
+  .cart-bar .cv{ font-family:'JetBrains Mono',monospace; font-weight:700; }
+  .cart-bar button{ background:var(--accent); color:#fff; border:none; padding:8px 14px; border-radius:10px; font-weight:700; font-size:13px; }
+
+  .toast{
+    position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(20px); background:var(--text); color:#fff;
+    padding:11px 18px; border-radius:12px; font-size:13px; opacity:0; pointer-events:none; transition:all .25s ease;
+    max-width:90%; text-align:center; z-index:50;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  ::-webkit-scrollbar{ width:0; height:0; }
+
+  #areaImpressao{ display:none; }
+  @media print{
+    body *{ visibility:hidden; }
+    #areaImpressao, #areaImpressao *{ visibility:visible; }
+    #areaImpressao{ display:block; position:absolute; top:0; left:0; width:100%; padding:16px; font-family:monospace; color:#000; }
+    #areaImpressao h2{ margin:0 0 4px; }
+    #areaImpressao p{ margin:4px 0; }
+    #areaImpressao hr{ border:none; border-top:1px dashed #000; margin:10px 0; }
+    #areaImpressao .item{ margin:4px 0; }
+    #areaImpressao .total{ font-weight:bold; font-size:16px; margin-top:10px; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header class="topbar">
+    <div class="topbar-row">
+      <button class="back-btn" id="backBtn" onclick="goHome()" aria-label="Voltar">←</button>
+      <div class="topbar-title">
+        <p class="brand" id="topTitle">BurgerGestão 🍔</p>
+        <div class="sub" id="topSub">Lanchonete do Zé</div>
+      </div>
+    </div>
+    <svg class="flame-line" viewBox="0 0 340 22" preserveAspectRatio="none">
+      <path d="M0 11 L60 11 L74 2 L88 20 L100 11 L340 11" />
+    </svg>
+  </header>
+
+  <main>
+
+    <!-- ===================== HOME ===================== -->
+    <section class="view active" id="view-home">
+      <h1 class="view-heading">E aí, chefe! 👨‍🍳</h1>
+      <p class="view-desc">Resumo da lanchonete agora.</p>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="num" id="statPedidosHoje">0</div><div class="label">Pedidos hoje</div></div>
+        <div class="stat-card"><div class="num" id="statCozinha">0</div><div class="label">Na cozinha</div></div>
+        <div class="stat-card"><div class="num" id="statMotoboy">0</div><div class="label">Aguardando motoboy</div></div>
+        <div class="stat-card"><div class="num" id="statFaturamento">R$ 0</div><div class="label">Faturamento hoje</div></div>
+      </div>
+
+      <div class="module-grid">
+        <button class="module-card" onclick="showView('cardapio')">
+          <div class="module-icon">📋</div>
+          <div class="m-title">Cardápio</div>
+          <div class="m-desc">Lanches, preços e ingredientes</div>
+        </button>
+        <button class="module-card" onclick="showView('pedidos')">
+          <div class="module-icon">🧾</div>
+          <div class="m-title">Novo Pedido</div>
+          <div class="m-desc">Montar pedido do cliente</div>
+        </button>
+        <button class="module-card" onclick="showView('cozinha')">
+          <div class="module-icon">🔥</div>
+          <div class="m-title">Cozinha</div>
+          <div class="m-desc">Pedidos pra preparar</div>
+        </button>
+        <button class="module-card" onclick="showView('motoboy')">
+          <div class="module-icon">🛵</div>
+          <div class="m-title">Motoboy</div>
+          <div class="m-desc">Entregas prontas p/ sair</div>
+        </button>
+        <button class="module-card" onclick="showView('historico')">
+          <div class="module-icon">📜</div>
+          <div class="m-title">Histórico</div>
+          <div class="m-desc">Todos os pedidos do dia</div>
+        </button>
+        <button class="module-card" onclick="showView('configuracoes')">
+          <div class="module-icon">⚙️</div>
+          <div class="m-title">Configurações</div>
+          <div class="m-desc">Dados da lanchonete</div>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===================== CARDÁPIO ===================== -->
+    <section class="view" id="view-cardapio">
+      <h2 class="view-heading">Cardápio</h2>
+      <p class="view-desc">Nome e preço na mesma linha, ingredientes logo abaixo.</p>
+
+      <div class="card">
+        <h3>Adicionar lanche</h3>
+        <form id="formLanche" onsubmit="return addLanche(event)">
+          <label>Nome do lanche</label>
+          <input type="text" id="lNome" placeholder="Ex: X-Tudo" required>
+          <label>Emoji (opcional)</label>
+          <input type="text" id="lEmoji" placeholder="🍔" maxlength="4">
+          <label>Preço (R$)</label>
+          <input type="number" id="lPreco" step="0.01" min="0" placeholder="18,00" required>
+          <label>O que vem dentro (ingredientes)</label>
+          <textarea id="lIngredientes" placeholder="Pão, alface, tomate, 2 hambúrgueres, 2 ovos, bacon, presunto, queijo, calabresa" required></textarea>
+          <button class="btn btn-primary" type="submit">Adicionar ao cardápio</button>
+        </form>
+      </div>
+
+      <div id="listaCardapio"></div>
+    </section>
+
+    <!-- ===================== NOVO PEDIDO ===================== -->
+    <section class="view" id="view-pedidos">
+      <h2 class="view-heading">Novo Pedido</h2>
+      <p class="view-desc">Escolha os lanches, o tipo de entrega e envie pra cozinha.</p>
+
+      <div class="card">
+        <h3>Itens do cardápio</h3>
+        <div id="listaEscolhaLanches"></div>
+      </div>
+
+      <div class="card">
+        <h3>Dados do pedido</h3>
+        <form id="formPedido" onsubmit="return criarPedido(event)">
+          <label>Nome do cliente</label>
+          <input type="text" id="pdCliente" placeholder="Ex: João Silva" required>
+          <label>Telefone</label>
+          <input type="tel" id="pdTelefone" placeholder="(11) 99999-0000">
+          <label>Tipo de pedido</label>
+          <select id="pdTipo" onchange="toggleEndereco()">
+            <option value="delivery">🛵 Delivery</option>
+            <option value="retirada">🏠 Retirada no balcão</option>
+          </select>
+          <div id="campoEndereco">
+            <label>Endereço de entrega</label>
+            <input type="text" id="pdEndereco" placeholder="Rua, número, bairro, ponto de referência">
+          </div>
+          <label>Observações</label>
+          <textarea id="pdObs" placeholder="Ex: sem cebola, ponto da carne, troco para R$ 50..."></textarea>
+          <button class="btn btn-primary" type="submit">Enviar pedido pra cozinha 🔥</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ===================== COZINHA ===================== -->
+    <section class="view" id="view-cozinha">
+      <h2 class="view-heading">Cozinha</h2>
+      <p class="view-desc">Pedidos recebidos e em preparo.</p>
+      <div id="listaCozinha"></div>
+    </section>
+
+    <!-- ===================== MOTOBOY ===================== -->
+    <section class="view" id="view-motoboy">
+      <h2 class="view-heading">Motoboy</h2>
+      <p class="view-desc">Assim que a cozinha marca como pronto, o pedido de delivery cai aqui.</p>
+      <div id="listaMotoboy"></div>
+    </section>
+
+    <!-- ===================== HISTÓRICO ===================== -->
+    <section class="view" id="view-historico">
+      <h2 class="view-heading">Histórico</h2>
+      <p class="view-desc">Todos os pedidos do dia, por status.</p>
+
+      <div class="tabs">
+        <button class="tab active" data-fth="todos" onclick="filtrarHistorico('todos', this)">Todos</button>
+        <button class="tab" data-fth="recebido" onclick="filtrarHistorico('recebido', this)">Recebidos</button>
+        <button class="tab" data-fth="preparando" onclick="filtrarHistorico('preparando', this)">Preparando</button>
+        <button class="tab" data-fth="pronto" onclick="filtrarHistorico('pronto', this)">Prontos</button>
+        <button class="tab" data-fth="finalizado" onclick="filtrarHistorico('finalizado', this)">Finalizados</button>
+      </div>
+
+      <div id="listaHistorico"></div>
+    </section>
+
+    <!-- ===================== CONFIGURAÇÕES ===================== -->
+    <section class="view" id="view-configuracoes">
+      <h2 class="view-heading">Configurações</h2>
+      <p class="view-desc">Dados básicos da lanchonete.</p>
+
+      <div class="card">
+        <h3>Dados da loja</h3>
+        <label>Nome da lanchonete</label>
+        <input type="text" id="cfgNome" value="Lanchonete do Zé">
+        <label>Telefone / WhatsApp da loja</label>
+        <input type="text" id="cfgTelefone" placeholder="(11) 99999-0000">
+        <label>WhatsApp do motoboy</label>
+        <input type="text" id="cfgTelefoneMotoboy" placeholder="(11) 98888-0000">
+        <label>Taxa de entrega (R$)</label>
+        <input type="number" id="cfgTaxa" step="0.01" min="0" value="0">
+        <button class="btn btn-primary" onclick="salvarConfigLoja()">Salvar alterações</button>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="cart-bar" id="cartBar">
+    <div class="ci">🧺 <span id="cartQtd">0</span> item(ns) · <span class="cv" id="cartValor">R$ 0,00</span></div>
+    <button onclick="showView('pedidos')">Continuar pedido</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div id="areaImpressao"></div>
+
+<script>
+/* ============================================================
+   ESTADO EM MEMÓRIA (MVP)
+   Próxima etapa: backend + banco de dados para persistência real,
+   múltiplos usuários (cozinha/motoboy em telas separadas) e
+   notificações push de verdade para o motoboy.
+   ============================================================ */
+let cardapio = [
+  { id:1, nome:'X-Tudo', emoji:'🍔', preco:18.00, ingredientes:'Pão, alface, tomate, 2 hambúrgueres, 2 ovos, bacon, presunto, queijo, calabresa.' },
+  { id:2, nome:'X-Salada', emoji:'🥪', preco:14.00, ingredientes:'Pão, alface, tomate, 1 hambúrguer, queijo, maionese da casa.' },
+  { id:3, nome:'X-Bacon', emoji:'🥓', preco:16.50, ingredientes:'Pão, hambúrguer, queijo, bacon crocante, molho especial.' }
+];
+let pedidos = [];
+let carrinho = {}; // { lancheId: quantidade }
+let nextId = { lanche:4, pedido:1 };
+let configLoja = { nome:'Lanchonete do Zé', telefone:'', telefoneMotoboy:'', taxa:0 };
+
+function hojeISO(){ return new Date().toISOString().slice(0,10); }
+function agoraHora(){
+  const d = new Date();
+  return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+
+/* ============================================================
+   NAVEGAÇÃO
+   ============================================================ */
+const titulos = {
+  home: ['BurgerGestão 🍔','Lanchonete do Zé'],
+  cardapio: ['Cardápio','Lanches e preços'],
+  pedidos: ['Novo Pedido','Monte o pedido do cliente'],
+  cozinha: ['Cozinha','Pedidos pra preparar'],
+  motoboy: ['Motoboy','Entregas prontas'],
+  historico: ['Histórico','Pedidos do dia'],
+  configuracoes: ['Configurações','Dados da loja']
+};
+
+function showView(id){
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + id).classList.add('active');
+  document.getElementById('backBtn').classList.toggle('show', id !== 'home');
+  document.getElementById('topTitle').textContent = titulos[id][0];
+  document.getElementById('topSub').textContent = titulos[id][1];
+  window.scrollTo(0,0);
+
+  if(id === 'cardapio') renderCardapio();
+  if(id === 'pedidos') { renderEscolhaLanches(); toggleEndereco(); }
+  if(id === 'cozinha') renderCozinha();
+  if(id === 'motoboy') renderMotoboy();
+  if(id === 'historico') renderHistorico('todos');
+  if(id === 'home') renderHome();
+  atualizarCartBar();
+}
+
+function goHome(){ showView('home'); }
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+function formatMoeda(v){
+  return 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+/* ============================================================
+   HOME
+   ============================================================ */
+function renderHome(){
+  const hoje = pedidos.filter(p => p.data === hojeISO());
+  document.getElementById('statPedidosHoje').textContent = hoje.length;
+  document.getElementById('statCozinha').textContent =
+    pedidos.filter(p => p.status === 'recebido' || p.status === 'preparando').length;
+  document.getElementById('statMotoboy').textContent =
+    pedidos.filter(p => p.status === 'pronto' && p.tipo === 'delivery').length;
+  const faturamento = hoje.filter(p => p.status === 'finalizado').reduce((s,p)=>s+p.total,0);
+  document.getElementById('statFaturamento').textContent = formatMoeda(faturamento);
+}
+
+/* ============================================================
+   CARDÁPIO
+   ============================================================ */
+function addLanche(e){
+  e.preventDefault();
+  const nome = document.getElementById('lNome').value.trim();
+  const emoji = document.getElementById('lEmoji').value.trim() || '🍔';
+  const preco = Number(document.getElementById('lPreco').value);
+  const ingredientes = document.getElementById('lIngredientes').value.trim();
+  cardapio.push({ id: nextId.lanche++, nome, emoji, preco, ingredientes });
+  document.getElementById('formLanche').reset();
+  renderCardapio();
+  showToast('Lanche adicionado ao cardápio');
+  return false;
+}
+
+function excluirLanche(id){
+  cardapio = cardapio.filter(l => l.id !== id);
+  delete carrinho[id];
+  renderCardapio();
+  showToast('Lanche removido do cardápio');
+}
+
+function renderCardapio(){
+  const el = document.getElementById('listaCardapio');
+  if(cardapio.length === 0){
+    el.innerHTML = `<div class="empty-state"><div class="e-icon">📋</div><p>Cardápio vazio. Adicione o primeiro lanche.</p></div>`;
+    return;
+  }
+  el.innerHTML = cardapio.map(l => `
+    <div class="menu-item">
+      <div class="menu-item-head">
+        <div class="menu-item-name">${l.nome} ${l.emoji}</div>
+        <div class="menu-item-price">${formatMoeda(l.preco)}</div>
+      </div>
+      <div class="menu-item-ing">${l.ingredientes}</div>
+      <div class="menu-item-actions">
+        <button class="btn btn-danger btn-sm" onclick="excluirLanche(${l.id})">Excluir</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   NOVO PEDIDO / CARRINHO
+   ============================================================ */
+function renderEscolhaLanches(){
+  const el = document.getElementById('listaEscolhaLanches');
+  if(cardapio.length === 0){
+    el.innerHTML = `<div class="empty-state"><div class="e-icon">🍔</div><p>Cadastre lanches no cardápio primeiro.</p></div>`;
+    return;
+  }
+  el.innerHTML = cardapio.map(l => {
+    const qtd = carrinho[l.id] || 0;
+    return `
+      <div class="qty-row">
+        <div class="qn">${l.emoji} ${l.nome} <span class="mono" style="color:var(--muted); font-weight:400;">· ${formatMoeda(l.preco)}</span></div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="mudarQtd(${l.id}, -1)">−</button>
+          <span class="qty-val">${qtd}</span>
+          <button class="qty-btn" onclick="mudarQtd(${l.id}, 1)">+</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function mudarQtd(id, delta){
+  const atual = carrinho[id] || 0;
+  const novo = Math.max(0, atual + delta);
+  if(novo === 0) delete carrinho[id]; else carrinho[id] = novo;
+  renderEscolhaLanches();
+  atualizarCartBar();
+}
+
+function totalCarrinho(){
+  return Object.entries(carrinho).reduce((soma, [id, qtd]) => {
+    const l = cardapio.find(l => l.id === Number(id));
+    return soma + (l ? l.preco * qtd : 0);
+  }, 0);
+}
+
+function qtdCarrinho(){
+  return Object.values(carrinho).reduce((s,q)=>s+q, 0);
+}
+
+function atualizarCartBar(){
+  const bar = document.getElementById('cartBar');
+  const qtd = qtdCarrinho();
+  const emPedidos = document.getElementById('view-pedidos').classList.contains('active');
+  document.getElementById('cartQtd').textContent = qtd;
+  document.getElementById('cartValor').textContent = formatMoeda(totalCarrinho());
+  bar.classList.toggle('show', qtd > 0 && !emPedidos);
+}
+
+function toggleEndereco(){
+  const tipo = document.getElementById('pdTipo').value;
+  document.getElementById('campoEndereco').style.display = tipo === 'delivery' ? 'block' : 'none';
+  document.getElementById('pdEndereco').required = tipo === 'delivery';
+}
+
+function criarPedido(e){
+  e.preventDefault();
+  if(qtdCarrinho() === 0){ showToast('Escolha pelo menos um lanche'); return false; }
+
+  const cliente = document.getElementById('pdCliente').value.trim();
+  const telefone = document.getElementById('pdTelefone').value.trim();
+  const tipo = document.getElementById('pdTipo').value;
+  const endereco = document.getElementById('pdEndereco').value.trim();
+  const obs = document.getElementById('pdObs').value.trim();
+
+  if(tipo === 'delivery' && !endereco){ showToast('Informe o endereço de entrega'); return false; }
+
+  const itens = Object.entries(carrinho).map(([id, qtd]) => {
+    const l = cardapio.find(l => l.id === Number(id));
+    return { nome: l.nome, emoji: l.emoji, preco: l.preco, qtd };
+  });
+  const total = totalCarrinho() + (tipo === 'delivery' ? configLoja.taxa : 0);
+
+  pedidos.push({
+    id: nextId.pedido++, cliente, telefone, tipo, endereco, obs, itens, total,
+    status: 'recebido', data: hojeISO(), hora: agoraHora()
+  });
+
+  carrinho = {};
+  document.getElementById('formPedido').reset();
+  toggleEndereco();
+  atualizarCartBar();
+  showToast('Pedido enviado pra cozinha 🔥');
+  showView('cozinha');
+  return false;
+}
+
+/* ============================================================
+   COZINHA
+   ============================================================ */
+function itensResumo(itens){
+  return itens.map(i => `${i.qtd}x ${i.emoji} ${i.nome}`).join(', ');
+}
+
+function iniciarPreparo(id){
+  const p = pedidos.find(p => p.id === id);
+  if(p) p.status = 'preparando';
+  renderCozinha();
+  renderHome();
+}
+
+function marcarPronto(id){
+  const p = pedidos.find(p => p.id === id);
+  if(!p) return;
+  p.status = 'pronto';
+  renderCozinha();
+  renderHome();
+  if(p.tipo === 'delivery'){
+    showToast('🛵 Lanche pronto! Mensagem enviada pro motoboy.');
+  } else {
+    showToast('✅ Pedido pronto para retirada no balcão.');
+  }
+}
+
+function telefoneWhatsMotoboy(){
+  if(!configLoja.telefoneMotoboy) return null;
+  let digitos = configLoja.telefoneMotoboy.replace(/\D/g, '');
+  if(!digitos.startsWith('55')) digitos = '55' + digitos;
+  return digitos;
+}
+
+function avisarMotoboy(id){
+  const p = pedidos.find(p => p.id === id);
+  if(!p) return;
+  const tel = telefoneWhatsMotoboy();
+  if(!tel){ showToast('Cadastre o WhatsApp do motoboy em Configurações'); return; }
+  const msg = `🛵 Pedido #${String(p.id).padStart(3,'0')} pra entregar!\n\nCliente: ${p.cliente}\nItens: ${itensResumo(p.itens)}\nEndereço: ${p.endereco}\n\n📍 Abrir no GPS: ${linkGps(p.endereco)}`;
+  window.open(`https://wa.me/${tel}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function renderCozinha(){
+  const lista = pedidos.filter(p => p.status === 'recebido' || p.status === 'preparando');
+  const el = document.getElementById('listaCozinha');
+  if(lista.length === 0){
+    el.innerHTML = `<div class="empty-state"><div class="e-icon">🔥</div><p>Nenhum pedido na cozinha agora.</p></div>`;
+    return;
+  }
+  el.innerHTML = [...lista].reverse().map(p => `
+    <div class="order-card">
+      <div class="order-top">
+        <div>
+          <div class="order-cliente">${p.cliente}</div>
+          <div class="order-tipo">${p.tipo === 'delivery' ? '🛵 Delivery' : '🏠 Retirada'} · ${p.hora}</div>
+        </div>
+        <span class="order-id">#${String(p.id).padStart(3,'0')}</span>
+      </div>
+      <div class="order-items">${itensResumo(p.itens)}</div>
+      ${p.tipo === 'delivery' ? `<div class="order-endereco">📍 ${p.endereco}</div>` : ''}
+      ${p.obs ? `<div class="order-endereco">📝 ${p.obs}</div>` : ''}
+      <div class="order-top" style="margin-top:8px;">
+        <span class="badge ${p.status === 'recebido' ? 'badge-warning' : 'badge-primary'}">${p.status === 'recebido' ? 'Recebido' : 'Preparando'}</span>
+        <span class="order-total">${formatMoeda(p.total)}</span>
+      </div>
+      <div class="order-actions">
+        ${p.status === 'recebido'
+          ? `<button class="btn btn-outline btn-sm" style="flex:1;" onclick="iniciarPreparo(${p.id})">Iniciar preparo</button>`
+          : `<button class="btn btn-primary btn-sm" style="flex:1; margin-top:0;" onclick="marcarPronto(${p.id})">Marcar como pronto</button>`}
+        <button class="btn btn-outline btn-sm" onclick="imprimirFicha(${p.id})">🖨️ Imprimir ficha</button>
+        ${p.tipo === 'delivery' ? `
+          <a class="btn btn-outline btn-sm" style="text-decoration:none;" href="${linkGps(p.endereco)}" target="_blank">🧭 GPS</a>
+          <button class="btn btn-whats btn-sm" onclick="avisarMotoboy(${p.id})">📱 Avisar motoboy</button>
+        ` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function imprimirFicha(id){
+  const p = pedidos.find(p => p.id === id);
+  if(!p){ showToast('Pedido não encontrado'); return; }
+
+  const areaEl = document.getElementById('areaImpressao');
+  areaEl.innerHTML = `
+    <h2>🍔 Ficha da Cozinha</h2>
+    <p><b>Pedido:</b> #${String(p.id).padStart(3,'0')}</p>
+    <p><b>Cliente:</b> ${p.cliente}</p>
+    <p><b>Tipo:</b> ${p.tipo === 'delivery' ? 'Delivery' : 'Retirada'} · ${p.hora}</p>
+    ${p.tipo === 'delivery' ? `<p><b>Endereço:</b> ${p.endereco}</p>` : ''}
+    <hr>
+    ${p.itens.map(i => `<div class="item">${i.qtd}x ${i.nome}</div>`).join('')}
+    ${p.obs ? `<hr><p><b>Obs:</b> ${p.obs}</p>` : ''}
+    <hr>
+    <div class="total">Total: ${formatMoeda(p.total)}</div>
+  `;
+
+  window.print();
+}
+
+/* ============================================================
+   MOTOBOY
+   ============================================================ */
+function marcarEntregue(id){
+  const p = pedidos.find(p => p.id === id);
+  if(p) p.status = 'finalizado';
+  renderMotoboy();
+  renderHome();
+  showToast('Entrega confirmada 🎉');
+}
+
+function renderMotoboy(){
+  const lista = pedidos.filter(p => p.status === 'pronto' && p.tipo === 'delivery');
+  const el = document.getElementById('listaMotoboy');
+  if(lista.length === 0){
+    el.innerHTML = `<div class="empty-state"><div class="e-icon">🛵</div><p>Nenhuma entrega esperando o motoboy.</p></div>`;
+    return;
+  }
+  el.innerHTML = [...lista].reverse().map(p => `
+    <div class="moto-card">
+      <div class="moto-tag">Pedido #${String(p.id).padStart(3,'0')} · ${p.cliente}</div>
+      <div class="moto-msg">🍔 Lanche tá pronto, bora entregar!</div>
+      <div class="moto-end">📍 ${p.endereco}</div>
+      <div class="moto-items">${itensResumo(p.itens)} ${p.telefone ? '· 📞 ' + p.telefone : ''}</div>
+      <a class="btn btn-outline" style="text-decoration:none; display:block; text-align:center; margin-bottom:8px;"
+         href="${linkGps(p.endereco)}" target="_blank">🧭 Abrir no GPS</a>
+      <button class="btn btn-outline" onclick="marcarEntregue(${p.id})">Confirmar entrega</button>
+    </div>
+  `).join('');
+}
+
+function linkGps(endereco){
+  return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(endereco);
+}
+
+/* ============================================================
+   HISTÓRICO
+   ============================================================ */
+function filtrarHistorico(filtro, btn){
+  document.querySelectorAll('#view-historico .tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderHistorico(filtro);
+}
+
+const statusLabel = {
+  recebido: ['Recebido','badge-warning'],
+  preparando: ['Preparando','badge-primary'],
+  pronto: ['Pronto','badge-success'],
+  finalizado: ['Finalizado','badge-muted']
+};
+
+function renderHistorico(filtro){
+  let lista = pedidos.filter(p => p.data === hojeISO());
+  if(filtro !== 'todos') lista = lista.filter(p => p.status === filtro);
+  const el = document.getElementById('listaHistorico');
+
+  if(lista.length === 0){
+    el.innerHTML = `<div class="empty-state"><div class="e-icon">📜</div><p>Nenhum pedido por aqui ainda.</p></div>`;
+    return;
+  }
+
+  el.innerHTML = [...lista].reverse().map(p => `
+    <div class="order-card">
+      <div class="order-top">
+        <div>
+          <div class="order-cliente">${p.cliente}</div>
+          <div class="order-tipo">${p.tipo === 'delivery' ? '🛵 Delivery' : '🏠 Retirada'} · ${p.hora}</div>
+        </div>
+        <span class="order-id">#${String(p.id).padStart(3,'0')}</span>
+      </div>
+      <div class="order-items">${itensResumo(p.itens)}</div>
+      ${p.tipo === 'delivery' ? `<div class="order-endereco">📍 ${p.endereco}</div>` : ''}
+      <div class="order-top" style="margin-top:8px;">
+        <span class="badge ${statusLabel[p.status][1]}">${statusLabel[p.status][0]}</span>
+        <span class="order-total">${formatMoeda(p.total)}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   CONFIGURAÇÕES
+   ============================================================ */
+function salvarConfigLoja(){
+  configLoja.nome = document.getElementById('cfgNome').value.trim() || 'Lanchonete do Zé';
+  configLoja.telefone = document.getElementById('cfgTelefone').value.trim();
+  configLoja.telefoneMotoboy = document.getElementById('cfgTelefoneMotoboy').value.trim();
+  configLoja.taxa = Number(document.getElementById('cfgTaxa').value) || 0;
+  document.getElementById('topSub').textContent = configLoja.nome;
+  titulos.home[1] = configLoja.nome;
+  showToast('Dados da loja atualizados');
+}
+
+/* ============================================================
+   INICIALIZAÇÃO
+   ============================================================ */
+renderHome();
+</script>
+</body>
+</html>
